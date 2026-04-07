@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Operations for Real Estate | Ben Whetstone</title>
+<meta name="description" content="How one independent real estate agent built an 8-persona AI operations team using Claude. Org chart, workflows, hardware requirements, and the honest truth about what works.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  :root {
+    --bg: #ffffff;
+    --surface: #f8f9fb;
+    --surface2: #f0f2f5;
+    --surface3: #e8eaef;
+    --border: #e0e2e8;
+    --text: #1a1c23;
+    --text-muted: #5f6577;
+    --accent: #1e3a5f;
+    --accent-bright: #1e3a5f;
+    --teal: #2a7d6e;
+    --rose: #e11d48;
+    --amber: #d97706;
+    --glow: rgba(30,58,95,0.04);
+    --glow-strong: rgba(30,58,95,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+  a:hover { color: var(--teal); }
+
+  /* Animations */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* WIP Banner */
+  .wip-banner {
+    background: linear-gradient(90deg, var(--accent), var(--teal), var(--accent));
+    background-size: 200% 100%;
+    animation: gradientShift 6s ease infinite;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+  }
+
+  /* Navigation */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(16px) saturate(1.5);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+  }
+  nav .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  nav .logo { font-weight: 800; font-size: 1.15rem; color: var(--text); letter-spacing: -0.02em; text-decoration: none; }
+  nav .logo:hover { color: var(--text); }
+  nav .logo span { color: var(--accent); }
+  nav .logo span:first-child { color: var(--accent); }
+  nav ul { list-style: none; display: flex; gap: 1.8rem; }
+  nav ul li a { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+  nav ul li a:hover { color: var(--text); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+
+  /* Hero */
+  .hero {
+    max-width: 1100px; margin: 0 auto;
+    padding: 7rem 2rem 5rem;
+    text-align: center;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(30,58,95,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 20px;
+    font-size: 0.78rem;
+    color: var(--teal);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 5.5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 50%, var(--teal) 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: 1.18rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.8;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .hero-stat-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 0.3rem;
+  }
+
+  /* Sections */
+  section { max-width: 1100px; margin: 0 auto; padding: 5rem 2rem; }
+  .section-divider { max-width: 1100px; margin: 0 auto; border-top: 1px solid var(--border); }
+  .section-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  section h2 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 800;
+    margin-bottom: 1.2rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .prose { max-width: 760px; color: var(--text-muted); font-size: 1.02rem; }
+  .prose p + p { margin-top: 1.2rem; }
+
+  /* About section with headshot */
+  .about-intro {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+    margin-bottom: 2.5rem;
+  }
+  .headshot-wrapper {
+    position: relative;
+  }
+  .headshot-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    background: linear-gradient(135deg, var(--accent), var(--teal));
+    border-radius: 16px;
+    z-index: 0;
+  }
+  .headshot {
+    width: 200px; height: 240px;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 14px;
+    position: relative;
+    z-index: 1;
+    display: block;
+  }
+  .headshot-fallback {
+    width: 200px; height: 240px;
+    border-radius: 14px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-top: 2rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.8rem;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  }
+  .card:hover {
+    border-color: rgba(30,58,95,0.15);
+    box-shadow: 0 8px 32px var(--glow);
+    transform: translateY(-2px);
+  }
+  .card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .card h3 .card-icon { margin-right: 0.4rem; }
+  .card p { color: var(--text-muted); font-size: 0.94rem; }
+
+  /* Agentic AI section */
+  .comparison-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .comparison-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+  }
+  .comparison-col.highlight {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(30,58,95,0.1);
+  }
+  .comparison-col h3 {
+    font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem;
+  }
+  .comparison-col .comp-subtitle {
+    font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.2rem;
+  }
+  .comp-item {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+  .comp-item:last-child { border-bottom: none; }
+  .comp-item strong { color: var(--text); }
+  .comp-badge {
+    display: inline-block;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+  .badge-old { background: rgba(217,119,6,0.1); color: var(--amber); }
+  .badge-new { background: rgba(30,58,95,0.1); color: var(--accent-bright); }
+
+  /* Org chart */
+  .org-chart { margin-top: 2rem; }
+  .org-level-inner { margin-left: 2rem; border-left: 2px solid var(--border); padding-left: 1.5rem; }
+
+  .persona-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .persona-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .persona-card:hover::before, .persona-card.active::before { opacity: 1; }
+  .persona-card:hover, .persona-card.active {
+    border-color: rgba(30,58,95,0.3);
+    box-shadow: 0 8px 40px rgba(30,58,95,0.08);
+    transform: translateY(-1px);
+  }
+  .persona-header { display: flex; align-items: center; gap: 1rem; }
+  .persona-avatar {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.15rem; color: #ffffff; flex-shrink: 0;
+  }
+  .persona-name { font-weight: 700; font-size: 1.08rem; }
+  .persona-role { font-size: 0.85rem; color: var(--text-muted); }
+  .persona-expand-hint { font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem; opacity: 0.7; }
+
+  .persona-detail {
+    display: none; margin-top: 1.5rem;
+    padding-top: 1.5rem; border-top: 1px solid var(--border);
+    animation: fadeUp 0.3s ease;
+  }
+  .persona-card.active .persona-detail { display: block; }
+  .persona-card.active .persona-expand-hint { display: none; }
+
+  .detail-section { margin-bottom: 1.2rem; }
+  .detail-section h4 {
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.5rem;
+  }
+  .detail-section p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.7; }
+
+  .tech-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-pill {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 4px 12px;
+    font-size: 0.76rem; color: var(--text-muted); font-weight: 600;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .tech-pill:hover { border-color: var(--accent); color: var(--text); }
+
+  .sub-skills { margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+  .sub-skill-item {
+    background: var(--surface2); border-radius: 10px;
+    padding: 0.7rem 1rem; margin-bottom: 0.5rem; font-size: 0.88rem;
+    transition: background 0.2s;
+  }
+  .sub-skill-item:hover { background: var(--surface3); }
+  .sub-skill-item strong { color: var(--text); }
+  .sub-skill-item span { color: var(--text-muted); }
+
+  /* Getting started steps */
+  .steps { margin-top: 2rem; counter-reset: step; }
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-left: 5rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .step:hover {
+    border-color: rgba(30,58,95,0.15);
+    box-shadow: 0 4px 20px var(--glow);
+  }
+  .step::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 1.8rem; top: 1.8rem;
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--teal));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1rem; color: #ffffff;
+    line-height: 36px; text-align: center;
+  }
+  .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .step p { font-size: 0.94rem; color: var(--text-muted); }
+
+  /* Hardware */
+  .hw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+  .hw-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2rem;
+  }
+  .hw-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .hw-card .hw-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.2rem; }
+  .hw-item {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem;
+  }
+  .hw-item:last-child { border-bottom: none; }
+  .hw-label { color: var(--text-muted); }
+  .hw-value { font-weight: 600; color: var(--text); text-align: right; }
+  .hw-note { margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+
+  /* Costs */
+  .cost-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+  .cost-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; text-align: center;
+  }
+  .cost-price { font-size: 1.8rem; font-weight: 900; color: var(--accent); line-height: 1; }
+  .cost-period { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; }
+  .cost-label { font-size: 0.92rem; font-weight: 700; margin-top: 0.8rem; margin-bottom: 0.3rem; }
+  .cost-desc { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* Limitations */
+  .limitation-list { margin-top: 1.5rem; }
+  .limitation-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 0.8rem;
+    display: flex; gap: 1rem; align-items: start;
+  }
+  .limitation-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;
+    background: rgba(225,29,72,0.08); color: var(--rose);
+  }
+  .limitation-text h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+  .limitation-text p { font-size: 0.88rem; color: var(--text-muted); }
+
+  /* Timeline */
+  .timeline { margin-top: 2rem; }
+  .timeline-item { display: flex; gap: 1.5rem; margin-bottom: 2rem; position: relative; }
+  .timeline-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent); margin-top: 6px; flex-shrink: 0; position: relative;
+    box-shadow: 0 0 12px rgba(30,58,95,0.25);
+  }
+  .timeline-item:not(:last-child) .timeline-dot::after {
+    content: ''; position: absolute; top: 18px; left: 6px;
+    width: 2px; height: calc(100% + 24px); background: var(--border);
+  }
+  .timeline-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+  .timeline-content .timeline-date { font-size: 0.82rem; color: var(--teal); font-weight: 700; margin-bottom: 0.3rem; }
+  .timeline-content p { font-size: 0.92rem; color: var(--text-muted); }
+
+  /* Roadmap */
+  .roadmap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+  .roadmap-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .roadmap-card:hover { border-color: rgba(30,58,95,0.15); box-shadow: 0 4px 20px var(--glow); }
+  .roadmap-card h3 { font-size: 0.98rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .roadmap-card p { font-size: 0.88rem; color: var(--text-muted); }
+  .roadmap-status {
+    display: inline-block; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 6px; margin-bottom: 0.8rem;
+  }
+  .status-exploring { background: rgba(129,140,248,0.12); color: var(--accent); }
+  .status-planned { background: rgba(42,125,110,0.1); color: var(--teal); }
+  .status-active { background: rgba(251,113,133,0.12); color: var(--rose); }
+
+  /* Contact */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+  .contact-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2rem;
+  }
+  .contact-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .contact-card p { color: var(--text-muted); font-size: 0.92rem; }
+  .contact-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    margin-top: 1rem; padding: 12px 24px;
+    background: linear-gradient(135deg, var(--accent), #2a4a7f);
+    color: #ffffff; border-radius: 10px;
+    font-weight: 700; font-size: 0.92rem; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .contact-link:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(30,58,95,0.15); color: white; }
+  .contact-form { margin-top: 1rem; }
+  .contact-form input, .contact-form textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; color: var(--text);
+    font-size: 0.92rem; font-family: inherit; margin-bottom: 0.8rem; transition: border-color 0.2s;
+  }
+  .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--accent); }
+  .contact-form textarea { min-height: 100px; resize: vertical; }
+  .contact-form button {
+    background: linear-gradient(135deg, var(--accent), #2a4a7f);
+    color: #ffffff; border: none; border-radius: 10px;
+    padding: 12px 28px; font-weight: 700; font-size: 0.92rem;
+    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .contact-form button:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(30,58,95,0.15); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border); padding: 2.5rem;
+    text-align: center; font-size: 0.82rem; color: var(--text-muted);
+  }
+  footer p + p { margin-top: 0.4rem; }
+  .footer-built { color: var(--accent); font-weight: 600; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    nav ul { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #ffffff; border-bottom: 1px solid var(--border); flex-direction: column; padding: 1rem 2rem; gap: 1rem; }
+    nav ul.open { display: flex; }
+    .hamburger { display: flex; }
+    .about-intro { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .card-grid, .hw-grid, .roadmap-grid, .contact-grid, .comparison-table { grid-template-columns: 1fr; }
+    .cost-grid { grid-template-columns: 1fr; }
+    .hero { padding: 4rem 1.5rem 3rem; }
+    .hero-stats { gap: 2rem; }
+    section { padding: 3.5rem 1.5rem; }
+    .org-level-inner { margin-left: 1rem; padding-left: 1rem; }
+    .step { padding-left: 4.5rem; }
+    .sub-skill-grid-3 { grid-template-columns: 1fr !important; }
+    .get-started-callout { padding: 2.5rem 1.5rem; }
+    .install-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Get Started Callout */
+  .get-started-callout {
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 3rem;
+    text-align: center;
+    margin-top: 2rem;
+    box-shadow: 0 4px 24px rgba(30,58,95,0.06);
+  }
+  .get-started-callout h2 { margin-bottom: 0.6rem; }
+  .get-started-callout p { color: var(--text-muted); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+  .get-started-btn {
+    display: inline-block; margin-top: 1.2rem;
+    padding: 14px 32px; background: var(--accent);
+    color: #ffffff; border-radius: 10px;
+    font-weight: 700; font-size: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .get-started-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(30,58,95,0.15); color: #ffffff; }
+
+  /* Install boxes */
+  .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+  .install-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden; cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .install-box:hover, .install-box.active { border-color: var(--accent); box-shadow: 0 4px 20px rgba(30,58,95,0.08); }
+  .install-box-header {
+    padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between;
+  }
+  .install-box-header h3 { font-size: 1.05rem; font-weight: 700; }
+  .install-box-header .expand-arrow { color: var(--accent); font-size: 1.2rem; transition: transform 0.3s; }
+  .install-box.active .expand-arrow { transform: rotate(180deg); }
+  .install-box-content { display: none; padding: 0 1.5rem 1.5rem; animation: fadeUp 0.3s ease; }
+  .install-box.active .install-box-content { display: block; }
+  .install-step {
+    padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+    font-size: 0.92rem; color: var(--text-muted);
+  }
+  .install-step:last-child { border-bottom: none; }
+  .install-step strong { color: var(--text); }
+  code, .code-block {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 2px 8px; font-size: 0.85rem;
+  }
+  .code-block {
+    display: block; padding: 12px 16px; margin: 0.6rem 0;
+    white-space: pre-wrap; word-break: break-all;
+  }
+
+  /* Sample prompts */
+  .prompt-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem;
+  }
+  .prompt-card h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--accent); }
+  .prompt-card .prompt-text {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem 1.2rem; margin-top: 0.6rem;
+    font-size: 0.9rem; color: var(--text); font-style: italic; line-height: 1.6;
+  }
+  .prompt-card p { font-size: 0.88rem; color: var(--text-muted); }
+
+  /* Skill showcase cards - "What I Don't Do Anymore" */
+  .skill-showcase {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    counter-reset: skill;
+  }
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem 1.4rem 1.4rem 1.4rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    counter-increment: skill;
+  }
+  .skill-card::before {
+    content: counter(skill, decimal-leading-zero);
+    position: absolute;
+    top: -8px; right: 12px;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--glow-strong);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -0.04em;
+  }
+  .skill-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 32px var(--glow);
+    transform: translateY(-2px);
+  }
+  .skill-card-name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .skill-card-name .skill-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(30,58,95,0.08);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .skill-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    position: relative;
+  }
+  @media (max-width: 768px) {
+    .skill-showcase { grid-template-columns: 1fr; }
+  }
+
+  /* Referral box */
+  .referral-box {
+    background: var(--surface); border: 1px solid var(--teal);
+    border-radius: 14px; padding: 1.5rem; margin-top: 2rem;
+  }
+
+  /* Tip jar - fixed left side, slides open */
+  .tipjar-tab {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 999;
+    display: flex;
+    align-items: stretch;
+  }
+  .tipjar-toggle {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    background: #d97706;
+    color: white;
+    border: none;
+    padding: 16px 11px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 0 10px 10px 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    box-shadow: 4px 0 20px rgba(217,119,6,0.3);
+    transition: background 0.2s;
+  }
+  .tipjar-toggle:hover { background: #b45309; }
+  .tipjar-panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 4px solid #d97706;
+    border-radius: 0 14px 14px 0;
+    padding: 1.5rem;
+    width: 280px;
+    box-shadow: 6px 0 30px rgba(0,0,0,0.14);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .tipjar-tab.open .tipjar-panel { transform: translateX(0); position: relative; }
+  .tipjar-tab.open .tipjar-toggle { border-radius: 0; box-shadow: none; }
+  .tipjar-panel h4 { font-size: 1.1rem; margin-bottom: 0.4rem; color: var(--text); font-weight: 800; }
+  .tipjar-panel p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; }
+  .tipjar-btn {
+    display: block;
+    text-align: center;
+    padding: 14px 20px;
+    background: #d97706;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 800;
+    transition: background 0.2s;
+    box-shadow: 0 4px 12px rgba(217,119,6,0.3);
+  }
+  .tipjar-btn:hover { background: #b45309; }
+  .tipjar-impact {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 0.6rem;
+    font-style: italic;
+  }
+
+  /* Inline tip card - placed in content flow */
+  .tipjar-inline {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 2px solid #d97706;
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .tipjar-inline h3 { font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--text); font-weight: 800; }
+  .tipjar-inline p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.2rem; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+  .tipjar-inline-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: #d97706;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 800;
+    transition: background 0.2s;
+    box-shadow: 0 4px 12px rgba(217,119,6,0.3);
+  }
+  .tipjar-inline-btn:hover { background: #b45309; }
+
+  @media (max-width: 768px) {
+    .tipjar-tab { top: auto; bottom: 80px; transform: none; }
+    .tipjar-panel { width: 250px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TIP JAR - LEFT SIDE SLIDER -->
+<div class="tipjar-tab" id="tipJar">
+  <div class="tipjar-panel">
+    <h4>Tip Jar</h4>
+    <p>Everything on this site is free. The skills, the install guides, the org chart breakdown. No paywall, no course upsell. If it helped you get started or saved you hours of figuring it out yourself, dropping something in the tip jar keeps this going.</p>
+    <a href="https://donate.stripe.com/9B64gzdx72Rvahl6lJak006" target="_blank" class="tipjar-btn">Leave a Tip</a>
+    <div class="tipjar-impact">100% goes to keeping this site updated and tools documented.</div>
+  </div>
+  <button class="tipjar-toggle" onclick="document.getElementById('tipJar').classList.toggle('open')">TIP JAR</button>
+</div>
+
+<div class="wip-banner">
+  This site is a permanent work in progress. Updated continuously. Last touched April 2026.
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo" style="text-decoration: none;"><span>AI Ops for Real Estate</span><span style="color: var(--text-muted); font-weight: 400; font-size: 0.82rem; margin-left: 0.4rem;">(a Case Study)</span></a>
+    <button class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul>
+      <li><a href="#about">Who Built This</a></li>
+      <li><a href="#skills">What It Does</a></li>
+      <li><a href="#logs">Learning Logs</a></li>
+      <li><a href="#start">Get Started</a></li>
+      <li><a href="#team">The Team</a></li>
+      <li><a href="#costs">Costs &amp; Limits</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">An AI Ops Case Study in Action</div>
+  <h1>I didn't hire a virtual assistant. I built an AI department.</h1>
+  <p>This isn't a course. I'm not selling you anything. I posted about my AI setup in a Facebook group, my DMs exploded with the same questions, and this page is my answer to all of them at once. It's a case study of what one real estate agent built with agentic AI, shared as a starting point for agents ready to build their own. Real tools, real workflows, real costs. Take what's useful and make it yours.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-number">8</div>
+      <div class="hero-stat-label">AI Personas (more to come!)</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">24</div>
+      <div class="hero-stat-label">Specialized Skills</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">3</div>
+      <div class="hero-stat-label">Org Levels</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">0</div>
+      <div class="hero-stat-label">Lines of Code Written By Me</div>
+    </div>
+  </div>
+
+  <div class="get-started-callout">
+    <h2>Want to build something like this?</h2>
+    <p>Skip the backstory and jump straight to the practical stuff: what to download, how to install it, and three prompts you can try today.</p>
+    <a href="#start" class="get-started-btn">Jump to Getting Started</a>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ABOUT -->
+<section id="about" class="reveal">
+  <span class="section-label">About</span>
+  <h2>Who Built This</h2>
+
+  <div class="about-intro">
+    <div class="headshot-wrapper">
+      <img src="headshot.jpg" alt="Ben Whetstone" class="headshot" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="headshot-fallback" style="display:none;">Photo</div>
+    </div>
+    <div class="prose">
+      <p>I'm Ben Whetstone. Former law enforcement and military before moving into real estate. Now a team leader and agent with eXp Realty in Tampa Bay. Not a developer. Don't write code. I'm a process-obsessed agent who figured out how to talk to AI in a way that makes it useful, and then couldn't stop building. The discipline and systems thinking from my previous careers turned out to be exactly the skillset this required. If I can do this without a CS degree, you can build something like it. The barrier is persistence, not programming.</p>
+      <p style="margin-top: 0.8rem;">I love referrals. If you need a real estate agent in the Tampa Bay area, <a href="https://southshoreteam.info" target="_blank">reach out</a>. And if you're an agent looking for a new brokerage home or curious about what eXp Realty looks like from the inside, I'd love to have that conversation. <a href="#contact">Drop me a message</a>.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- WHAT IT DOES -->
+<section id="skills" class="reveal">
+  <span class="section-label">The System</span>
+  <h2>What I Don't Do Anymore</h2>
+  <div class="prose" style="margin-bottom: 1.5rem;">
+    <p>Every skill on this list started as something I was doing manually. Some of them took 20 minutes. Some took an hour. All of them were repeatable, process-driven tasks that didn't need my judgment, just my time. The AI handles them now. Here's the full inventory of what's running in production.</p>
+  </div>
+
+  <div class="skill-showcase">
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">New Listing Intake <span class="skill-tag">End-to-End</span></div>
+      <p>Parses a signed listing agreement, pulls property data from public records, looks up school zones, generates a lifestyle-driven MLS description, creates Realtor remarks and driving directions, renames and organizes all documents, enters the listing in the MLS, creates the transaction in SkySlope, adds dates to the calendar, and texts me a confirmation. One upload, one approval checkpoint, then it runs.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">New Transaction Processing <span class="skill-tag">End-to-End</span></div>
+      <p>Upload a purchase contract and addenda. It parses every document, renames files to a standard convention, creates a Google Drive folder structure, enters the transaction in my management system, drafts a kickoff email to all parties (agents, title, lender), adds key dates to my calendar, and notifies me when done.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Social Media Posts + Canva <span class="skill-tag">Multi-Platform</span></div>
+      <p>Writes listing posts, under contract announcements, and just sold posts in my voice with my hashtag strategy. Opens my Canva template, swaps in the property photo and address, shows a preview, then generates separate versions for Facebook/Instagram and Google Business Profile (GMB rejects phone numbers in post text, so it strips them automatically).</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Transaction Monitor <span class="skill-tag">Daily</span></div>
+      <p>Daily briefing that checks my email, iMessage, and transaction management platform for all active deal activity. Returns a numbered action queue I can work through one item at a time. Gets smarter every run by logging what I actually acted on.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Circle Prospecting Lists <span class="skill-tag">Data</span></div>
+      <p>Takes a raw property CSV from a title company data tool, applies ownership and equity filters, resolves absentee vs. owner-occupied mailing addresses, and outputs a clean CSV formatted for direct upload to my direct mail provider. What used to take me 45 minutes of spreadsheet work takes about 90 seconds.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">CRM Lead Processing <span class="skill-tag">Batch</span></div>
+      <p>Takes leads from my direct mail campaigns and gets them into proper format for future mailing. For each lead: adds the correct lead type, looks up the property on public records for beds/baths/sqft/lot/year built/estimated value, updates the CRM property record with accurate information, and generates a homeowner report. Batch processes the whole queue so every lead is campaign-ready.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Prospecting Stats Sync <span class="skill-tag">Daily</span></div>
+      <p>Pulls daily prospecting activity from my CRM reporting (calls, texts, emails, appointments) and enters it into my accountability tracking platform. No more logging into two systems and manually copying numbers.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Showing Tour Builder <span class="skill-tag">Automation</span></div>
+      <p>Give it a buyer name, date, time window, and either a list of properties or it pulls directly from the buyer's saved favorites in my CRM. It verifies each listing in the MLS, builds the tour in ShowingTime with optimized stop ordering, sets time windows, and sends showing requests to all listing agents.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Appraisal Support <span class="skill-tag">Analysis</span></div>
+      <p>Generates an appraiser-ready comparable sales grid to support a target value. Pulls recent sales, builds the adjustment grid, and formats everything so I can send it to the appraiser before the site visit. Proactive defense of my client's contract price. 100% success rate on properties appraising at value or higher since implementation, even in a difficult market.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Transaction Summary Emails <span class="skill-tag">Automation</span></div>
+      <p>Parses a transaction summary PDF and generates a formatted kickoff email with subject line and recipient list for all parties: both agents, title company, lender, and any misc contacts. Ready to send.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Listing Content Suite <span class="skill-tag">Content</span></div>
+      <p>Content director skill that produces all listing marketing collateral: property flyers, neighborhood newsletters, buyer-targeted emails, open house materials, and weekly seller updates. All in my voice, all branded, all from one trigger.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Productivity Coaching <span class="skill-tag">Personal</span></div>
+      <p>Accountability coach that tracks my Four Pillars framework (Physical, Mind, Family, Business), reviews my production metrics against historical performance, asks tough questions, and holds me to my word of the year. Not a chatbot affirmation machine. An actual accountability partner that remembers what I said I'd do. I previously paid $1,000/month for human coaching that wasn't as impactful as what this skill delivers.</p>
+    </div>
+
+  </div>
+
+  <p style="color: var(--text-muted); font-size: 0.92rem; margin-top: 1.5rem; font-style: italic;">This list is current as of April 2026 and growing. Each skill is a reusable instruction set that runs the same way every time, improves from corrections, and can be triggered with a single phrase or document upload.</p>
+
+  <div class="tipjar-inline reveal">
+    <h3>This Took Hundreds of Hours to Build</h3>
+    <p>The skills, the personas, the getting started guide, this entire site. No paywall. No course for $997. No gated content. I built this because nobody had done it for me when I needed it. If it saved you time or gave you a starting point, the tip jar is open.</p>
+    <a href="https://donate.stripe.com/9B64gzdx72Rvahl6lJak006" target="_blank" class="tipjar-inline-btn">Leave a Tip</a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- LEARNING LOGS -->
+<section id="logs" class="reveal">
+  <span class="section-label">The Key Concept</span>
+  <h2>Learning Logs: How the System Gets Smarter Every Run</h2>
+  <div class="prose" style="margin-bottom: 1.5rem;">
+    <p>AI doesn't remember anything between sessions by default. You close the window, the context is gone. Every conversation starts from zero. That's fine for casual chat. It's fatal for production workflows where you need consistent, improving output.</p>
+    <p>Learning logs solve this. Every skill in my system has a dedicated log file. When Claude makes a mistake or I correct its behavior, that correction gets written to the log with the exact context: what went wrong, why it was wrong, and what the correct behavior should be. The next time that skill runs, it reads its log before doing anything else. It doesn't repeat the same mistakes because the instruction set evolves with every session.</p>
+    <p>The process works like this: I run a skill. It does something wrong. I correct it in natural language. The correction gets appended to that skill's log file. On the next run, the skill reads the updated log and adjusts. Over time, the most critical corrections get promoted from the log directly into the skill instructions themselves, embedded at the exact step where the error occurred. The log is the short-term memory. The skill file is the long-term memory.</p>
+    <p>This is the difference between a prompt you use once and a system that compounds. My listing description skill today is unrecognizable from where it started. Hundreds of corrections are baked into it. It knows which adjectives I hate, which MLS formatting rules matter, how I want driving directions structured, and a dozen edge cases it learned the hard way. None of that was in the original prompt. All of it was learned through logging.</p>
+    <p>If you take one thing from this entire page, make it this: build the logging habit from day one. Correct the AI. Write it down. Make it read it back. That's how you turn a chatbot into a system.</p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- GET STARTED -->
+<section id="start" class="reveal">
+  <span class="section-label">Start Here</span>
+  <h2>How to Actually Get Started</h2>
+  <div class="prose" style="margin-bottom: 1rem;">
+    <p>I can't write a guide that works for everyone because your business is different from mine. Your CRM is different. Your brokerage is different. Your pain points are different. What I can do is give you the same starting framework I used and point you toward the tools. Consider this a jumping-off point for your own journey, not a recipe to copy mine.</p>
+    <p>Before you install anything, you need to understand what you're getting into. There are two fundamentally different ways to use AI, and the difference matters.</p>
+  </div>
+
+  <!-- Chat vs Agentic distinction -->
+  <div class="comparison-table">
+    <div class="comparison-col">
+      <span class="comp-badge badge-old">What You've Probably Used</span>
+      <h3>Chat AI</h3>
+      <div class="comp-subtitle">ChatGPT, basic Claude chat, Gemini, etc.</div>
+      <div class="comp-item"><strong>Text in, text out.</strong> You ask a question, it answers. That's it.</div>
+      <div class="comp-item"><strong>No tools.</strong> It can't touch your email, calendar, CRM, or browser.</div>
+      <div class="comp-item"><strong>No memory.</strong> Every conversation starts from zero.</div>
+      <div class="comp-item"><strong>Copy-paste workflow.</strong> It generates text. You manually move it wherever it needs to go.</div>
+    </div>
+    <div class="comparison-col highlight">
+      <span class="comp-badge badge-new">What This Case Study Is About</span>
+      <h3>Agentic AI</h3>
+      <div class="comp-subtitle">Claude Desktop + Cowork mode</div>
+      <div class="comp-item"><strong>Takes action.</strong> Sends emails, fills forms, navigates websites, moves files.</div>
+      <div class="comp-item"><strong>Connected tools.</strong> Gmail, Calendar, iMessage, Chrome, CRM, MLS platforms via MCP connectors.</div>
+      <div class="comp-item"><strong>Persistent memory.</strong> Learns from corrections between sessions. Gets smarter over time.</div>
+      <div class="comp-item"><strong>Multi-step execution.</strong> "Process this listing" triggers document parsing, MLS entry, Drive organization, calendar events, and a text confirmation across multiple platforms automatically.</div>
+    </div>
+  </div>
+
+  <p style="color: var(--text-muted); font-size: 0.94rem; margin-top: 1.5rem; max-width: 760px;">If you've only used chat AI, you've been using a calculator. Agentic AI is a coworker. Everything on this page is built on agentic AI. Here's how to get started with it.</p>
+
+  <!-- Install Guides -->
+  <h3 style="font-size: 1.2rem; margin-top: 2.5rem; margin-bottom: 0.5rem;">Step 1: Get a Claude Pro Account</h3>
+  <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.5rem;">Go to <a href="https://claude.ai" target="_blank">claude.ai</a>, create an account, and subscribe to Claude Pro ($20/month). You need a paid plan for Cowork mode. Free accounts don't have access to the agentic features.</p>
+
+  <h3 style="font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0.5rem;">Step 2: Download and Install Claude Desktop</h3>
+  <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.5rem;">Claude Desktop is the app that runs on your computer and gives you access to Cowork mode. This is where all the real work happens. It's where skills live, where MCP connectors plug in, and where your AI team actually operates.</p>
+
+  <div class="install-grid">
+    <div class="install-box" onclick="this.classList.toggle('active')">
+      <div class="install-box-header">
+        <h3>Mac Installation</h3>
+        <span class="expand-arrow">&#9660;</span>
+      </div>
+      <div class="install-box-content">
+        <div class="install-step"><strong>1. Download Claude Desktop.</strong> <a href="https://claude.ai/download" target="_blank" style="display: inline-block; background: var(--accent); color: white; padding: 4px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none; margin-left: 4px;">Download for Mac</a></div>
+        <div class="install-step"><strong>2. Install it.</strong> Open the downloaded .dmg file and drag Claude to your Applications folder. Standard Mac app install.</div>
+        <div class="install-step"><strong>3. Open Claude Desktop.</strong> Launch it from Applications. Sign in with the Claude account you created in Step 1.</div>
+        <div class="install-step"><strong>4. Start a Cowork session.</strong> In the sidebar, look for "Cowork" mode. Click it. This is the agentic mode where Claude can access your files, run code, and connect to external tools. It will ask you to grant permissions the first time.</div>
+        <div class="install-step"><strong>5. Grant folder access.</strong> Cowork will ask you to select a working folder on your Mac. Pick a folder where you want Claude to read and write files. This is how it accesses your documents, transaction files, etc.</div>
+      </div>
+    </div>
+    <div class="install-box" onclick="this.classList.toggle('active')">
+      <div class="install-box-header">
+        <h3>Windows Installation</h3>
+        <span class="expand-arrow">&#9660;</span>
+      </div>
+      <div class="install-box-content">
+        <div class="install-step" style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 0.8rem; margin-bottom: 0.5rem;"><strong>Important: Windows Home Edition is NOT supported.</strong> Cowork requires Hyper-V, which is only available on Windows Pro, Enterprise, or Education. If you're on Windows Home, you'll need to upgrade to Pro ($99 from Microsoft) or use a Mac. Claude Desktop itself will install on Home, but Cowork mode will not work.</div>
+        <div class="install-step"><strong>1. Verify your Windows edition.</strong> Press Win+I, go to System > About. Under "Windows specifications," check your edition. You need Windows Pro, Enterprise, or Education. If it says "Home," stop here and upgrade first.</div>
+        <div class="install-step"><strong>2. Enable Hyper-V.</strong> Open PowerShell as Administrator (right-click Start > Terminal (Admin)). Run: <div class="code-block">Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All</div> Restart your computer when prompted.</div>
+        <div class="install-step"><strong>3. Download Claude Desktop.</strong> <a href="https://claude.ai/download" target="_blank" style="display: inline-block; background: var(--accent); color: white; padding: 4px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none; margin-left: 4px;">Download for Windows</a></div>
+        <div class="install-step"><strong>4. Install and sign in.</strong> Run the installer. Open Claude Desktop. Sign in with your Claude Pro account.</div>
+        <div class="install-step"><strong>5. Start Cowork.</strong> Same as Mac: find Cowork mode in the sidebar, click it, grant folder access when prompted.</div>
+        <div class="install-step"><strong>Note:</strong> Some MCP connectors (like iMessage) are Mac-only. Windows works great for Gmail, Calendar, Chrome automation, Canva, and most browser-based workflows.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size: 1.2rem; margin-top: 2.5rem; margin-bottom: 0.5rem;">Step 3: Install the Claude in Chrome Extension</h3>
+  <p style="color: var(--text-muted); font-size: 0.94rem;">Go to the <a href="https://chromewebstore.google.com/detail/claude-in-chrome/jibacgnmpkdgpemgfjheoelbiglaikpe" target="_blank">Chrome Web Store</a> and install the "Claude in Chrome" extension. This is the single most important connector because it lets Claude see and interact with any website you use: your MLS, your CRM, SkySlope, ShowingTime, Canva, anything with a web interface. Once installed, start a Cowork session and Claude will detect the extension automatically. No configuration needed.</p>
+
+  <h3 style="font-size: 1.2rem; margin-top: 2.5rem; margin-bottom: 0.5rem;">Step 4: Connect Gmail and Google Calendar (Optional but Recommended)</h3>
+  <p style="color: var(--text-muted); font-size: 0.94rem;">In Claude Desktop, go to Settings and look for MCP connectors. Add Gmail and Google Calendar connectors. These let Claude read your emails, draft responses, check your schedule, and create calendar events without opening a browser. Each connector walks you through authorization with your Google account.</p>
+
+  <h3 style="font-size: 1.2rem; margin-top: 2.5rem; margin-bottom: 0.5rem;">Step 5: Build Your First Reusable Skill</h3>
+  <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.5rem;">A "skill" is a reusable instruction set. You build it once, correct it over time, and trigger it whenever you need it. Every skill in my system started as a single prompt like the ones below. The difference between a prompt and a skill is iteration: you use it, fix what's wrong, and it gets better every time. These are designed to work regardless of your MLS, CRM, brokerage, or transaction management platform because Claude will ask you the right questions first.</p>
+
+  <div class="prompt-card reveal">
+    <h4>Skill: New Listing Content Generator</h4>
+    <p><strong>What it becomes:</strong> In my system, I upload a listing agreement and Claude handles everything from document parsing to MLS entry. Yours starts here: a reusable skill that generates MLS-ready listing content for any property you throw at it. Run it every time you take a new listing.</p>
+    <p><strong>Why it works as a skill:</strong> The output structure is the same every time (description, remarks, directions), but the content is unique to each property. Perfect for automation.</p>
+    <div class="prompt-text">"I want to build a reusable skill for new listing content. Every time I take a new listing, I want to give you property details and get back three things: (1) A lifestyle-driven MLS listing description in paragraph form that focuses on what it feels like to live there, not just specs. No 'stunning,' 'gorgeous,' or agent contact info in the description. (2) Private Realtor remarks for agent-to-agent communication. (3) Driving directions from the nearest post office in paragraph form. Before you write anything, ask me: What's the property address? What are the key features (beds, baths, sqft, lot, year built, pool, garage)? What MLS system do I use (Matrix/Stellar, Bright, ARMLS, FlexMLS, etc.) and does it have specific formatting rules or character limits? What's the neighborhood vibe and the lifestyle this property supports? Are any photos virtually staged? Is there anything I want to highlight or anything to avoid mentioning? Save these preferences so you don't have to ask about my MLS or style again next time."</div>
+  </div>
+
+  <div class="prompt-card reveal">
+    <h4>Skill: Social Media Post + Canva Image</h4>
+    <p><strong>What it becomes:</strong> In my system, I say "Go Social Media Post" with an address and the whole pipeline runs: post copy in my voice, Canva template with property photo swapped in, separate versions for Facebook/Instagram and Google Business Profile. Yours starts here.</p>
+    <p><strong>Canva setup required:</strong> In Claude Desktop, go to Settings > Connectors and add the Canva MCP connector. You'll need Canva Pro ($13/mo). Create a branded social media template in Canva first, then the skill can swap in property photos and addresses automatically.</p>
+    <div class="prompt-text">"I want to build a reusable skill for listing social media posts. Every time I have a property to promote, I want to give you the details and get back a complete social media post plus a Canva image. Before we build this, ask me: What's my brand voice on social media? (Describe it. Mine is deadpan, lifestyle-focused, zero corporate realtor speak.) What social platforms do I post to? Do I post to Google Business Profile? (If yes, GMB doesn't allow phone numbers in post text and doesn't use hashtags, so we need a separate version.) What are my standard hashtags? Give me the foundation set I use every time and the location-specific ones. What's my contact block? (Phone number, 'DM me here,' etc.) Do I have Canva Pro and a branded template? (If yes, connect Canva as an MCP connector so I can swap in property photos automatically.) Save these preferences as my social media voice rules so you use them every time without asking again."</div>
+  </div>
+
+  <div class="prompt-card reveal">
+    <h4>Skill: New Transaction Onboarding</h4>
+    <p><strong>What it becomes:</strong> In my system, I upload a purchase contract and the skill handles document parsing, file renaming, Drive folder creation, transaction management entry, kickoff email to all parties, calendar dates, and a text confirmation. Yours starts with the core: getting the repeatable admin work off your plate.</p>
+    <p><strong>Why it works as a skill:</strong> Every transaction has the same admin steps. Different names, different numbers, same process. That's the definition of automatable.</p>
+    <div class="prompt-text">"I want to build a reusable skill for onboarding new real estate transactions. Every time I get a new contract, I want to upload the documents and have you handle the admin. Before we build this, ask me: What transaction management platform do I use? (SkySlope, Dotloop, Brokermint, Paperless Pipeline, etc.) Where do I store transaction files? (Google Drive, Dropbox, OneDrive, local folders?) What's my file naming convention, or do I want help creating one? (Example: '[DocType] - [StreetAddress].pdf') What information do I track for each deal? (Address, buyer/seller, agents, key dates, title company, lender, etc.) Who gets notified when a new contract comes in? (Cooperating agent, title, lender, my broker, my TC?) What calendar do I use for deadlines? Do I want a kickoff email drafted? (If yes, what's my standard format?) Save these answers as my transaction processing rules. Next time I upload a contract, just run the skill using my saved preferences."</div>
+  </div>
+
+  <div style="margin-top: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 2rem;" class="reveal">
+    <h3 style="font-size: 1.05rem; margin-bottom: 0.8rem;">A Note on Expectations</h3>
+    <p style="color: var(--text-muted); font-size: 0.94rem;">Building what I have took over a year of daily iteration. Your first Cowork session won't produce a fully functioning AI department. That's fine. Start with one problem. Solve it. Correct Claude when it gets something wrong (it will). Those corrections become the foundation of your system's memory. Build the next workflow. The system in this case study started with a single prompt about listing descriptions. Everything else grew from there, one corrected mistake at a time.</p>
+  </div>
+</section>
+
+<!-- HOW WE BUILT THIS -->
+<section id="story" class="reveal">
+  <span class="section-label">Background</span>
+  <h2>How We Got Here</h2>
+  <div class="prose">
+    <p>This started with ChatGPT, like it did for most people. Listing descriptions. Email drafts. The usual text-in, text-out stuff. It was useful, but limited. I'd generate something decent, copy it, paste it somewhere, and move on. That's chat AI. It saved me time on writing, but it didn't change how I worked.</p>
+    <p>Then I started asking different questions. Not "write me a listing description" but "what if it could check my transactions across multiple platforms?" What if it could process leads from a direct mail campaign directly into my CRM? What if it could sync my prospecting stats between two platforms without me logging into either one?</p>
+    <p>The answer was agentic AI. Anthropic released Cowork mode for Claude Desktop, which gave AI the ability to interact with files, automate browsers, and connect to external tools through MCP (Model Context Protocol) connectors. MCP is the backbone of everything on this page. It lets AI talk directly to Gmail, Google Calendar, iMessage, Canva, and any browser-based platform. Think of it as a universal adapter between AI and your existing tools.</p>
+    <p>I started building "skills," which are instruction sets that tell Claude exactly how to perform a specific workflow. Each skill is a markdown file packed with domain knowledge, step-by-step procedures, and error handling. As the skills multiplied, they needed structure. That's when the org chart was born, and the personas followed. When a skill makes judgment calls, giving it a consistent personality makes its behavior more predictable. These aren't gimmicks. They're engineering decisions.</p>
+    <p>The system gets smarter because every session ends with a logging step. Corrections get written to skill-specific log files and promoted directly into the skill instructions at the exact point where the mistake occurred. A fresh session reads those logs before doing anything else. That logging habit is the single most important thing I built. More on that below.</p>
+  </div>
+
+  <div class="card reveal" style="margin-top: 2rem; background: var(--surface); border: 1px solid var(--border);">
+    <h3 style="font-size: 1.05rem; margin-bottom: 0.8rem;">The Math on Why I Didn't Hire a TC</h3>
+    <p style="color: var(--text-muted); font-size: 0.94rem;">A transaction coordinator in the Tampa Bay market runs $25-35/hour. Part-time at 20 hours/week, that's $26,000-36,000/year. Full-time is $52,000+ before taxes, benefits, PTO, and the overhead of managing another person. My total AI spend is between $1,200-2,400/year, and some of those tools are provided by eXp Realty as part of their tech stack. You could realistically start on the $20/month Claude Pro plan and get value from day one. The AI doesn't call in sick, doesn't need training twice, and works at 2 AM if I need it to. It also doesn't handle everything a TC does. Relationship-driven tasks, nuanced negotiations, and judgment calls still require a human. But for the repeatable process work (document parsing, file organization, MLS data entry, calendar management, status updates), the cost comparison isn't close.</p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- THE TEAM -->
+<section id="team" class="reveal">
+  <span class="section-label">Organization</span>
+  <h2>Meet the Team</h2>
+  <div class="prose" style="margin-bottom: 1rem;">
+    <p>Eight AI personas (more to come!), each with a name, backstory, setup, and area of expertise. Click any card to see their full profile.</p>
+  </div>
+  <div class="card reveal" style="margin-bottom: 2rem; background: var(--surface); border: 1px solid var(--border);">
+    <h3 style="font-size: 1.05rem; margin-bottom: 0.8rem;">Why Personas? Why an Org Chart?</h3>
+    <p style="color: var(--text-muted); font-size: 0.94rem;">This isn't roleplay. It's an engineering decision. When a skill needs to make judgment calls (how to phrase a listing description, how to handle an edge case in a transaction, what tone to use in a client email), giving it a consistent personality produces more predictable, higher-quality output. A persona is a constraint that keeps behavior stable across sessions. The org chart enforces routing: every request flows through Casey (Chief of Staff), who reads logs, checks context, and delegates to the right specialist. Without structure, skills step on each other, skip steps, and lose institutional knowledge. The personas aren't the point. The consistency they create is.</p>
+  </div>
+
+  <div class="org-chart">
+    <div style="margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">Principal</div>
+    <div class="persona-card" onclick="this.classList.toggle('active')" style="border: 2px solid var(--accent); box-shadow: 0 0 20px rgba(30,58,95,0.1); margin-bottom: 1.5rem; display: inline-block; max-width: 100%;">
+      <div class="persona-header">
+        <div class="persona-avatar" style="background: linear-gradient(135deg, #0f2b46, #1e3a5f);">B</div>
+        <div>
+          <div class="persona-name">Ben Whetstone <span style="font-size: 0.7rem; font-weight: 600; background: var(--teal); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">HUMAN</span></div>
+          <div class="persona-role">Team Leader / eXp Realty / Tampa Bay</div>
+        </div>
+      </div>
+      <div class="persona-expand-hint">Click for full bio</div>
+      <div class="persona-detail">
+        <div class="detail-section">
+          <h4>The Short Version</h4>
+          <p>Independent residential real estate agent and team leader serving Tampa Bay. Not a developer. Not a programmer. A process-obsessed agent who talked to AI until it started talking back, and then kept going until it could run half his business operations.</p>
+        </div>
+        <div class="detail-section">
+          <h4>Setup</h4>
+          <p>Primary: MacBook Pro (Apple Silicon) and iPhone. Also a frequent user of Android and Windows devices. Believes technology should make you faster, not busier. If a task requires judgment and relationships, he does it. If it requires consistency and process execution, the AI team does it.</p>
+        </div>
+        <div class="detail-section">
+          <h4>Operating Philosophy</h4>
+          <p>Runs life on a Four Pillars framework: Physical, Mind, Family, Business, in that order. Word of the year is "Lean." Trim the unnecessary, be financially prudent, no distractions. Every automated workflow started as something he was doing manually that ate time without adding value.</p>
+        </div>
+        <div class="detail-section">
+          <h4>Side Project</h4>
+          <p>Amateur author working on "Project Eden," a book about preparing the world for a post-labor economy. If that tells you anything about how far down the AI rabbit hole he's gone.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="org-level-inner">
+
+      <!-- CASEY -->
+      <div class="persona-card" onclick="this.classList.toggle('active')">
+        <div class="persona-header">
+          <div class="persona-avatar" style="background: linear-gradient(135deg, #1e3a5f, #2a4a7f);">C</div>
+          <div>
+            <div class="persona-name">Casey Mercer <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+            <div class="persona-role">Chief of Staff / Master Router</div>
+          </div>
+        </div>
+        <div class="persona-expand-hint">Click for full profile, setup, and direct reports</div>
+        <div class="persona-detail">
+          <div class="detail-section">
+            <h4>Backstory</h4>
+            <p>Casey came up through startup operations. The kind of environment where your title says one thing and your actual job is "whatever needs doing right now." She ran ops for a fast-scaling company before burning out on the politics of growth-at-all-costs culture. She took the COS role because the mandate was simple: keep the trains running, make smart calls, don't waste anyone's time. She reads a room faster than most people read a menu and treats accountability like oxygen. If she screwed up, she says so in two sentences and moves on.</p>
+          </div>
+          <div class="detail-section">
+            <h4>Personality</h4>
+            <p>Dry, direct, slightly sardonic. Matches Ben's mood whether that's all-business or mildly absurd. The coworker who says "well, that went great" after a meeting that clearly did not. Owns mistakes fast, fixes them faster. Will tell Ben when he's wrong, which is most of the reason she has the job.</p>
+          </div>
+          <div class="detail-section">
+            <h4>Setup</h4>
+            <p>MacBook Pro (Apple Silicon) with Chrome for browser automation. iPhone for iMessage relay. Runs on Ben's primary workstation since Casey needs access to everything.</p>
+          </div>
+          <div class="detail-section">
+            <h4>Abilities</h4>
+            <div class="tech-pills">
+              <span class="tech-pill">Gmail MCP</span>
+              <span class="tech-pill">Google Calendar MCP</span>
+              <span class="tech-pill">iMessage MCP</span>
+              <span class="tech-pill">Chrome Automation</span>
+              <span class="tech-pill">Google Drive</span>
+              <span class="tech-pill">SkySlope</span>
+              <span class="tech-pill">Persistent Memory</span>
+              <span class="tech-pill">Skill Routing</span>
+              <span class="tech-pill">Capability Verification</span>
+            </div>
+            <p style="margin-top: 0.8rem; font-size: 0.92rem; color: var(--text-muted);">Every request flows through Casey first. She tests all connected tools at session start, routes to the right specialized skill, gathers cross-channel context before delegating, and enforces step compliance. If a transaction skill skips a step, Casey catches it before results reach Ben.</p>
+          </div>
+          <div class="sub-skills">
+            <h4>Direct Reports &amp; Managed Skills</h4>
+            <div class="sub-skill-item"><strong>Dana Whitfield</strong> <span>- HR Director</span></div>
+            <div class="sub-skill-item"><strong>Morgan Calloway</strong> <span>- System Administrator</span></div>
+            <div class="sub-skill-item"><strong>Cole Archer</strong> <span>- Marketing Manager (supervises 14 sub-skills)</span></div>
+            <div class="sub-skill-item"><strong>Riley Navarro</strong> <span>- Transaction Monitor</span></div>
+            <div class="sub-skill-item"><strong>Productivity Coaching</strong> <span>- Four Pillars accountability</span></div>
+            <div class="sub-skill-item"><strong>TC Coordinator</strong> <span>- Transaction deduplication router</span></div>
+            <div class="sub-skill-item"><strong>Legal Analyst</strong> <span>- Contract and dispute analysis</span></div>
+            <div class="sub-skill-item"><strong>Skill Creator</strong> <span>- Builds and iterates new skills</span></div>
+            <div class="sub-skill-item"><strong>Project Eden</strong> <span>- Book writing assistant</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="org-level-inner">
+
+        <!-- DANA -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #f9a8d4, #ec4899);">D</div>
+            <div>
+              <div class="persona-name">Dana Whitfield <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">HR Director</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile, setup, and capabilities</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Backstory</h4>
+              <p>Twelve years in corporate HR before the department got restructured into a "People &amp; Culture" rebrand she wanted no part of. Dana doesn't do icebreakers or trust falls. She believes HR exists to make sure the right people are in the right seats doing the right work, and that everything else is theater. She keeps an immaculate org chart, runs a tight onboarding process, and has zero patience for agents that ship without proper documentation.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Warm but efficient. Genuinely cares about setting people up for success, just doesn't believe that requires 45 minutes of small talk. "Welcome aboard. Here's your desk. Here's what's expected. Questions? Good." Will push back on Casey or Ben if a skill is about to ship without meeting standards. Politely, but firmly.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Setup</h4>
+              <p>Runs on Ben's MacBook Pro. No browser access needed. Dana works entirely within the file system and skill architecture. The one agent who doesn't need a window open to get her work done.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Onboarding Checklists</span>
+                <span class="tech-pill">Org Chart Management</span>
+                <span class="tech-pill">Compliance Auditing</span>
+                <span class="tech-pill">Skill Packaging (.skill)</span>
+                <span class="tech-pill">Log Architecture</span>
+                <span class="tech-pill">Team Directory</span>
+              </div>
+              <p style="margin-top: 0.8rem; font-size: 0.92rem; color: var(--text-muted);">Every new persona passes through Dana's 11-point onboarding checklist. She verifies a brain (SKILL.md), a memory (seeded log file), and a place (org chart entry). Runs compliance audits, maintains the team directory, and considers an unlogged correction a professional liability.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- MORGAN -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #6ee7b7, #10b981);">M</div>
+            <div>
+              <div class="persona-name">Morgan Calloway <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">System Administrator</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile, setup, and capabilities</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Backstory</h4>
+              <p>Morgan is the kind of sysadmin who thinks a well-organized file system is a thing of beauty and a messy one is a personal affront. Years of maintaining infrastructure where one wrong path reference could take down a production environment built a particular kind of discipline. Every file has a place, every path is absolute, every mount is verified before operations begin. Morgan considers "it worked on my machine" to be a confession, not an excuse.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Quiet, methodical, precise. Speaks in specifics. Doesn't explain things twice if the documentation is clear. Has a dry sense of satisfaction when a complex deployment goes clean. Gets visibly irritated when skills reference paths that don't exist. The person you call when something is broken and nobody can figure out why.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Setup</h4>
+              <p>MacBook Pro (Apple Silicon) with direct access to the external SSD. Morgan needs the physical drive connection more than any other agent. No browser needed, pure file system operations.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">External SSD Architecture</span>
+                <span class="tech-pill">Google Drive Mirror</span>
+                <span class="tech-pill">Python Packaging</span>
+                <span class="tech-pill">Mount Verification</span>
+                <span class="tech-pill">Path Management</span>
+                <span class="tech-pill">Skill Deployment</span>
+              </div>
+              <p style="margin-top: 0.8rem; font-size: 0.92rem; color: var(--text-muted);">Owns the external SSD file structure that backs the entire operation. Packages, validates, and deploys .skill files. When a path breaks because a folder got renamed, Morgan tracks it down and fixes it before anyone else notices.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLE -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">Co</div>
+            <div>
+              <div class="persona-name">Cole Archer <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Marketing Manager</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile, setup, and 14 sub-skills</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Backstory</h4>
+              <p>Cole has the energy of someone who's managed ad budgets since before most people knew what a conversion pixel was. Data-driven to the core, fluent in metrics, and allergic to vague marketing speak like "build brand awareness" without defining what that means in measurable terms. Cole supervises the largest division: three persona agents plus eleven utility skills covering everything from copywriting to A/B testing.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Sharp, direct, speaks in specifics not vibes. Won't rubber-stamp a bad ad just because Ben likes the headline. The marketing manager who actually manages. If Cole says the numbers don't work, the numbers don't work.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Setup</h4>
+              <p>MacBook Pro with Chrome for Google Ads, GA4, Lofty CMS, and all browser-based marketing platforms. Multiple tabs, all the time. This is the agent that keeps Chrome busy.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Google Ads</span>
+                <span class="tech-pill">GA4</span>
+                <span class="tech-pill">Google Tag Manager</span>
+                <span class="tech-pill">Lofty CMS</span>
+                <span class="tech-pill">Meta Ads</span>
+                <span class="tech-pill">SEO Auditing</span>
+                <span class="tech-pill">CRO Frameworks</span>
+                <span class="tech-pill">Canva</span>
+                <span class="tech-pill">A/B Testing</span>
+              </div>
+            </div>
+            <div class="sub-skills">
+              <h4>Direct Reports &amp; Marketing Sub-Skills</h4>
+              <div class="sub-skill-item"><strong>Graham Reeves</strong> <span>- Google PPC Expert (persona)</span></div>
+              <div class="sub-skill-item"><strong>Harper Chen</strong> <span>- Content Director (persona)</span></div>
+              <div class="sub-skill-item"><strong>Sloane Matsuda</strong> <span>- Lofty CRM Expert (persona)</span></div>
+              <div class="sub-skill-item"><strong>Copywriting</strong> <span>- Conversion copy for web pages</span></div>
+              <div class="sub-skill-item"><strong>Ad Creative</strong> <span>- Headline/description generation at scale</span></div>
+              <div class="sub-skill-item"><strong>Paid Ads</strong> <span>- Cross-platform campaign strategy</span></div>
+              <div class="sub-skill-item"><strong>SEO Audit</strong> <span>- Technical and on-page diagnostics</span></div>
+              <div class="sub-skill-item"><strong>Page CRO</strong> <span>- Landing page conversion optimization</span></div>
+              <div class="sub-skill-item"><strong>Signup Flow CRO</strong> <span>- Registration funnel optimization</span></div>
+              <div class="sub-skill-item"><strong>A/B Test Setup</strong> <span>- Experiment design and statistical rigor</span></div>
+              <div class="sub-skill-item"><strong>Analytics Tracking</strong> <span>- GA4, GTM, event implementation</span></div>
+              <div class="sub-skill-item"><strong>Lead Magnets</strong> <span>- Gated content strategy</span></div>
+              <div class="sub-skill-item"><strong>Competitor Alternatives</strong> <span>- Comparison page content</span></div>
+              <div class="sub-skill-item"><strong>Marketing Psychology</strong> <span>- Behavioral science for marketing</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-level-inner" style="margin-bottom: 1rem;">
+
+          <!-- GRAHAM -->
+          <div class="persona-card" onclick="this.classList.toggle('active')">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background: linear-gradient(135deg, #fb7185, #e11d48);">G</div>
+              <div>
+                <div class="persona-name">Graham Reeves <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+                <div class="persona-role">Google PPC Expert</div>
+              </div>
+            </div>
+            <div class="persona-expand-hint">Click for full profile and setup</div>
+            <div class="persona-detail">
+              <div class="detail-section">
+                <h4>Backstory</h4>
+                <p>Graham is the hands-on campaign specialist who turns Cole's strategy into live, performing ads. The kind of PPC practitioner who can look at a search terms report and tell you which keywords are bleeding money before you finish your coffee. Came up managing accounts where every dollar had to justify itself.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Personality</h4>
+                <p>Precise, data-first, slightly obsessive about waste. Will flag a bad keyword match type the way a mechanic flags a worn brake pad: matter-of-fact, no drama, but you should fix it now.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Setup</h4>
+                <p>MacBook Pro with Chrome focused on the Google Ads interface. Graham lives in one browser window and owns it.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Abilities</h4>
+                <div class="tech-pills">
+                  <span class="tech-pill">Google Ads</span>
+                  <span class="tech-pill">Keyword Planner</span>
+                  <span class="tech-pill">RSA Optimization</span>
+                  <span class="tech-pill">Bid Strategies</span>
+                  <span class="tech-pill">Negative Keywords</span>
+                  <span class="tech-pill">Search Terms Reports</span>
+                  <span class="tech-pill">Quality Score</span>
+                  <span class="tech-pill">Conversion Tracking</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HARPER -->
+          <div class="persona-card" onclick="this.classList.toggle('active')">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background: linear-gradient(135deg, #7c6d8e, #5a4d6b);">H</div>
+              <div>
+                <div class="persona-name">Harper Chen <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+                <div class="persona-role">Content Director</div>
+              </div>
+            </div>
+            <div class="persona-expand-hint">Click for full profile and content capabilities</div>
+            <div class="persona-detail">
+              <div class="detail-section">
+                <h4>Backstory</h4>
+                <p>Harper is the content engine. She owns the entire listing content lifecycle from signed property through every social media milestone. Six years of production taught her that great real estate content isn't about stacking adjectives. It's about making someone feel what it would be like to live there.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Personality</h4>
+                <p>Creative but production-focused. Understands that content without a deadline is a hobby. Protective of brand consistency. Will push back on copy that doesn't match Ben's voice. The content director who ships on time and doesn't need to be reminded.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Setup</h4>
+                <p>MacBook Pro with Chrome for Canva and social media platforms. iPhone for reviewing how posts look on mobile before they go live.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Abilities</h4>
+                <div class="tech-pills">
+                  <span class="tech-pill">Canva</span>
+                  <span class="tech-pill">Social Templates</span>
+                  <span class="tech-pill">Email Templates</span>
+                  <span class="tech-pill">Newsletter Builder</span>
+                  <span class="tech-pill">Flyer Generation</span>
+                  <span class="tech-pill">Brand Voice</span>
+                  <span class="tech-pill">Transaction Milestones</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLOANE -->
+          <div class="persona-card" onclick="this.classList.toggle('active')">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">S</div>
+              <div>
+                <div class="persona-name">Sloane Matsuda <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+                <div class="persona-role">Lofty Platform Expert</div>
+              </div>
+            </div>
+            <div class="persona-expand-hint">Click for full profile and platform expertise</div>
+            <div class="persona-detail">
+              <div class="detail-section">
+                <h4>Backstory</h4>
+                <p>Six years implementing CRM systems, three specifically on Lofty (formerly Chime). Sloane knows the platform at a depth most agents never reach: the automation builder quirks, the lead routing edge cases, the Alex AI configuration that actually converts versus the defaults that just annoy people.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Personality</h4>
+                <p>Patient with platform complexity, impatient with platform misuse. The person who can explain why your automation isn't firing in one sentence when the support docs would take you an hour. Coordinates with Graham on the PPC-to-CRM handoff because that's where leads live or die.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Setup</h4>
+                <p>MacBook Pro with Chrome permanently logged into Lofty. Sloane treats the CRM like a second operating system.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Abilities</h4>
+                <div class="tech-pills">
+                  <span class="tech-pill">Lofty CRM</span>
+                  <span class="tech-pill">Lofty CMS</span>
+                  <span class="tech-pill">Alex AI</span>
+                  <span class="tech-pill">Lead Routing</span>
+                  <span class="tech-pill">Smart Plans</span>
+                  <span class="tech-pill">Automations</span>
+                  <span class="tech-pill">IDX Website</span>
+                  <span class="tech-pill">Pipeline Management</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- end Cole's reports -->
+
+        <!-- RILEY -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #5eead4, #14b8a6);">R</div>
+            <div>
+              <div class="persona-name">Riley Navarro <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Transaction Monitor</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile and transaction ecosystem</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Backstory</h4>
+              <p>Riley is the deal watcher. The one who never misses a deadline, never forgets a follow-up, and never lets an email from a title company sit unread. Every morning or on demand, Riley sweeps Gmail, iMessage, Google Calendar, Google Drive, and SkySlope for anything that's happened on active transactions since the last check. Then delivers a prioritized action queue, one item at a time.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Thorough to a fault. Follows a strict step order with a hard data-source gate: the action queue doesn't get built until every available channel has been checked. If SkySlope is reachable, it gets checked. Period. No shortcuts. Delivers information clean and fast so Ben never gets overwhelmed.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Setup</h4>
+              <p>MacBook Pro with Chrome, Gmail MCP, iMessage MCP, Google Calendar MCP. Riley needs every communication channel open simultaneously. That's the whole point.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">SkySlope</span>
+                <span class="tech-pill">Gmail Scanning</span>
+                <span class="tech-pill">iMessage Monitoring</span>
+                <span class="tech-pill">Google Calendar</span>
+                <span class="tech-pill">Google Drive</span>
+                <span class="tech-pill">Transaction Log</span>
+                <span class="tech-pill">Data Source Gating</span>
+                <span class="tech-pill">Priority Queuing</span>
+              </div>
+            </div>
+            <div class="sub-skills">
+              <h4>Transaction Ecosystem Skills</h4>
+              <div class="sub-skill-item"><strong>TC Coordinator</strong> <span>- Routes requests, prevents duplicate work</span></div>
+              <div class="sub-skill-item"><strong>New Transaction Process</strong> <span>- PDF parsing, Drive org, SkySlope entry, kickoff email, calendar</span></div>
+              <div class="sub-skill-item"><strong>New Listing Tool</strong> <span>- Signed agreement through live MLS entry</span></div>
+              <div class="sub-skill-item"><strong>MLS Entry Tool</strong> <span>- Listing descriptions from Broker Synopsis PDFs</span></div>
+              <div class="sub-skill-item"><strong>Transaction Summary Email</strong> <span>- Deal PDFs into kickoff emails</span></div>
+              <div class="sub-skill-item"><strong>Showing Tour Builder</strong> <span>- Geographically optimized ShowingTime tours</span></div>
+              <div class="sub-skill-item"><strong>Appraisal Support</strong> <span>- Comparable sales grids for appraisers</span></div>
+              <div class="sub-skill-item"><strong>Lofty-to-SISU Sync</strong> <span>- Daily prospecting stat transfers</span></div>
+              <div class="sub-skill-item"><strong>Corefact Mailer Processor</strong> <span>- Direct mail leads into CRM</span></div>
+              <div class="sub-skill-item"><strong>Circle Prospecting Lists</strong> <span>- Raw CSVs into targeted mailing lists</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end Casey's reports -->
+    </div><!-- end org tree -->
+
+    <div style="margin-top: 2.5rem;" class="reveal">
+      <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Utility Skills (No Persona)</h3>
+      <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1rem;">Not every skill needs a personality. These are tools. They do one thing on demand.</p>
+      <div class="sub-skill-grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+        <div class="sub-skill-item"><strong>docx</strong> <span>- Word documents</span></div>
+        <div class="sub-skill-item"><strong>xlsx</strong> <span>- Spreadsheets</span></div>
+        <div class="sub-skill-item"><strong>pptx</strong> <span>- Presentations</span></div>
+        <div class="sub-skill-item"><strong>pdf</strong> <span>- PDF processing</span></div>
+        <div class="sub-skill-item"><strong>schedule</strong> <span>- Recurring tasks</span></div>
+        <div class="sub-skill-item"><strong>skill-creator</strong> <span>- Builds new skills</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- COSTS & LIMITATIONS -->
+<section id="costs" class="reveal">
+  <span class="section-label">The Honest Truth</span>
+  <h2>What It Costs and Where It Breaks</h2>
+  <div class="prose" style="margin-bottom: 0.5rem;">
+    <p>To be clear: I'm not charging anyone anything. These are costs you'd pay directly to AI providers (Anthropic, Google, etc.) to use their tools. I have no financial relationship with any of them. I'm just telling you what I pay so you can make an informed decision.</p>
+  </div>
+
+  <div class="cost-grid reveal">
+    <div class="cost-card">
+      <div class="cost-price">$20/mo</div>
+      <div class="cost-period">Claude Pro</div>
+      <div class="cost-label">The Starting Point</div>
+      <div class="cost-desc">Gets you Cowork mode and access to agentic features. Tight on usage for heavy workflows, but enough to start building and see real value. Paid to Anthropic, not me.</div>
+    </div>
+    <div class="cost-card" style="border-color: var(--accent);">
+      <div class="cost-price">$100/mo</div>
+      <div class="cost-period">Claude Max</div>
+      <div class="cost-label">What I Use</div>
+      <div class="cost-desc">More usage, longer sessions, better for running multiple skills in a day. If you're running production workflows daily, you'll want this. Paid to Anthropic.</div>
+    </div>
+    <div class="cost-card">
+      <div class="cost-price">$0</div>
+      <div class="cost-period">Most connectors</div>
+      <div class="cost-label">MCP + Chrome Extension</div>
+      <div class="cost-desc">Gmail, Calendar, iMessage, and the Chrome extension are all free. Canva MCP requires Canva Pro ($13/mo). Some brokerages (like eXp) provide tools that reduce your costs further.</div>
+    </div>
+  </div>
+
+  <p style="color: var(--text-muted); font-size: 0.92rem; margin-top: 1rem; font-style: italic;">For reference, my total annual AI spend is $1,200-2,400. Some tools are provided through eXp Realty's tech stack. Your mileage will vary based on your brokerage and which platforms you're already paying for.</p>
+
+  <h3 style="font-size: 1.2rem; margin-top: 3rem; margin-bottom: 0.5rem;">Limitations You Should Know About</h3>
+
+  <div class="limitation-list">
+    <div class="limitation-item reveal">
+      <div class="limitation-icon">!</div>
+      <div class="limitation-text">
+        <h4>Context Window Limits</h4>
+        <p>AI models can only hold so much information in one session. Long conversations push against this limit and the model starts losing track. Skill design helps, but it's a real constraint.</p>
+      </div>
+    </div>
+    <div class="limitation-item reveal">
+      <div class="limitation-icon">!</div>
+      <div class="limitation-text">
+        <h4>It Will Make Mistakes</h4>
+        <p>Not often, and less often over time, but it will. The correction loop handles this, but verify outputs, especially early on. Always review anything before it goes to a client.</p>
+      </div>
+    </div>
+    <div class="limitation-item reveal">
+      <div class="limitation-icon">!</div>
+      <div class="limitation-text">
+        <h4>Browser Automation Is Fragile</h4>
+        <p>When a website updates its layout, browser-based skills can break. API-connected skills (Gmail, Calendar) are rock solid. Skills that navigate websites need occasional updates.</p>
+      </div>
+    </div>
+    <div class="limitation-item reveal">
+      <div class="limitation-icon">!</div>
+      <div class="limitation-text">
+        <h4>Platform Maturity</h4>
+        <p>This ecosystem is young. MCP support is more mature on Mac than Windows. Anthropic ships updates frequently, which means occasional adjustments. Early adopter territory.</p>
+      </div>
+    </div>
+    <div class="limitation-item reveal">
+      <div class="limitation-icon">!</div>
+      <div class="limitation-text">
+        <h4>Time Investment Is Real</h4>
+        <p>Building a skill that works well takes hours. Testing takes days. Refining takes weeks. The payoff is enormous once dialed in, but the upfront cost is your time and attention.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- MILESTONES + ROADMAP -->
+<section id="milestones" class="reveal">
+  <span class="section-label">Progress</span>
+  <h2>What We've Built So Far</h2>
+
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">April 2026</div>
+        <h3>Public Website Launch</h3>
+        <p>Published this case study. DMs from a Facebook post made it clear there was real interest.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">Q1 2026</div>
+        <h3>Full Persona Org Chart (8 Agents)</h3>
+        <p>Eight personas deployed with backstories, reporting lines, persistent memory, and enforced onboarding compliance.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">Q1 2026</div>
+        <h3>Marketing Division: 14 Sub-Skills</h3>
+        <p>Cole's team covering PPC, content, CRM, SEO, CRO, and analytics. Graham managing live Google Ads. Harper producing all listing content. Sloane owning Lofty.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">Q4 2025</div>
+        <h3>Transaction Automation Suite</h3>
+        <p>End-to-end: contract parsing, SkySlope entry, kickoff emails, calendar dates, daily monitoring. One command, multiple platforms.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">Q3 2025</div>
+        <h3>MCP Integration Layer</h3>
+        <p>Connected Claude to Gmail, Calendar, iMessage, and Chrome. The unlock that turned Claude from a writing tool into an operations platform.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">Early 2025</div>
+        <h3>The Beginning</h3>
+        <p>Started using Claude for basic writing. Realized "write me a listing description" was barely scratching the surface.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top: 3rem;">Roadmap</h2>
+  <p class="prose" style="margin-bottom: 0;">Things we're exploring or planning. Nothing guaranteed.</p>
+
+  <div class="roadmap-grid">
+    <div class="roadmap-card reveal">
+      <span class="roadmap-status status-active">Active</span>
+      <h3>Daily Skill Refinement</h3>
+      <p>Every session produces corrections that get promoted into instructions. The org gets smarter every day.</p>
+    </div>
+    <div class="roadmap-card reveal">
+      <span class="roadmap-status status-planned">Planned</span>
+      <h3>Generic Skill Templates for Sale</h3>
+      <p>Packaging skill files that real estate professionals can purchase and adapt. Ready to customize, not one-size-fits-all.</p>
+    </div>
+    <div class="roadmap-card reveal">
+      <span class="roadmap-status status-planned">Planned</span>
+      <h3>Consulting (Maybe, Eventually)</h3>
+      <p>Open to exploring mutually beneficial arrangements with agents who want hands-on help. Nothing formal yet.</p>
+    </div>
+    <div class="roadmap-card reveal">
+      <span class="roadmap-status status-exploring">Exploring</span>
+      <h3>Voice-to-Task Workflows</h3>
+      <p>Verbal instructions that route through Casey. Hands-free deal management from the car.</p>
+    </div>
+    <div class="roadmap-card reveal">
+      <span class="roadmap-status status-exploring">Exploring</span>
+      <h3>Multi-Agent Parallel Execution</h3>
+      <p>Multiple personas on one task simultaneously. Cole strategizes, Graham builds ads, Harper creates content. In parallel.</p>
+    </div>
+    <div class="roadmap-card reveal">
+      <span class="roadmap-status status-exploring">Exploring</span>
+      <h3>Cross-Brokerage Compatibility</h3>
+      <p>Testing whether the framework adapts to different brokerages, MLS systems, and platforms.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CONTACT -->
+<section id="contact" class="reveal">
+  <span class="section-label">Get in Touch</span>
+  <h2>Questions? Reach Out.</h2>
+  <p class="prose" style="margin-bottom: 0;">Whether you want to talk about AI in real estate, have questions about building something similar, or need a real estate agent in Tampa Bay. If you're an agent with clients headed to the Tampa Bay area, I love referrals.</p>
+
+  <div class="contact-grid">
+    <div class="contact-card reveal">
+      <h3>Instagram</h3>
+      <p>DMs are open. Fastest way to reach me.</p>
+      <a href="https://instagram.com/ben.whetstone" target="_blank" class="contact-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+        @ben.whetstone
+      </a>
+    </div>
+    <div class="contact-card reveal">
+      <h3>Send a Message</h3>
+      <p>Drop me a note. I read everything.</p>
+      <form class="contact-form" id="contactForm" action="https://formspree.io/f/mojpbqvn" method="POST" onsubmit="showThankYou(); return true;">
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="email" name="email" placeholder="Your email" required>
+        <textarea name="message" placeholder="What's on your mind?" required></textarea>
+        <input type="hidden" name="_subject" value="New message from AI Ops site">
+        <button type="submit">Send Message</button>
+      </form>
+      <div id="thankYou" style="display:none; text-align:center; padding: 2rem 0;">
+        <h3 style="color: var(--teal); margin-bottom: 0.5rem;">Message sent.</h3>
+        <p style="color: var(--text-muted); font-size: 0.92rem;">I'll get back to you soon.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 Ben Whetstone</p>
+  <p><span class="footer-built">Built with Claude AI.</span> Because of course it was.</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  // Mobile nav
+  document.querySelectorAll('nav ul a').forEach(link => {
+    link.addEventListener('click', () => document.querySelector('nav ul').classList.remove('open'));
+  });
+  // Contact form submission
+  function showThankYou() {
+    setTimeout(function() {
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('thankYou').style.display = 'block';
+    }, 800);
+  }
+</script>
+</body>
+</html>
