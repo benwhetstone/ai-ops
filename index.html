@@ -1368,40 +1368,26 @@ Rules:
   <h3 style="font-size: 1.2rem; margin-top: 2.5rem; margin-bottom: 0.5rem;">Step 4: Connect Gmail and Google Calendar (Optional but Recommended)</h3>
   <p style="color: var(--text-muted); font-size: 0.94rem;">In Claude Desktop, go to Settings and look for MCP connectors. Add Gmail and Google Calendar connectors. These let Claude read your emails, draft responses, check your schedule, and create calendar events without opening a browser. Each connector walks you through authorization with your Google account.</p>
 
-  <h3 style="font-size: 1.2rem; margin-top: 2.5rem; margin-bottom: 0.5rem;">Step 5: Set Up Your File Storage</h3>
-  <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;">This is the part most people skip, and it's the part that matters most for long-term reliability. Claude needs a consistent place to read and write files. If your folder paths change between sessions, skills break. Here's how to set it up right.</p>
-
-  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;" class="reveal">
-    <h4 style="font-size: 1rem; margin-bottom: 0.6rem;">Why Local Storage Beats Cloud-Only</h4>
-    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;">Cloud storage (Google Drive web, Dropbox web, iCloud) works for humans clicking around in a browser. It does not work well for an AI agent that needs to read, rename, and organize files programmatically. The paths are inconsistent, the sync delays cause race conditions, and the web interfaces add unnecessary steps. A local folder on your actual hard drive gives Claude a fast, predictable file system to work with.</p>
-    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;">The ideal setup: a dedicated folder on a local drive (internal SSD or an external SSD) that syncs to the cloud automatically via Google Drive Desktop, OneDrive, or Dropbox desktop app. You get the speed and reliability of local storage with the backup and accessibility of cloud sync. Claude reads and writes locally. Google Drive (or your cloud provider) syncs it in the background. Best of both worlds.</p>
-    <p style="color: var(--text-muted); font-size: 0.94rem;"><strong>My setup:</strong> I use an external SSD connected to my Mac with a "Claude Cowork Skills" root folder. Inside that folder: Transactions, Skill Logs, Marketing Collateral, and subfolders for each skill's working files. Google Drive Desktop syncs the whole thing to my Google Drive automatically. Claude always mounts the same local paths, and everything ends up in the cloud without me touching it.</p>
-  </div>
-
-  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;" class="reveal">
-    <h4 style="font-size: 1rem; margin-bottom: 0.6rem;">Google Drive Desktop Setup (Recommended)</h4>
-    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;">Download <a href="https://www.google.com/drive/download/" target="_blank">Google Drive Desktop</a> and sign in. It creates a virtual drive on your computer that mirrors your Google Drive. Any file you put in that drive folder syncs to the cloud automatically, and any file added from the web appears locally. When Claude saves a renamed contract to your local Transactions folder, it shows up in Google Drive within seconds.</p>
-    <p style="color: var(--text-muted); font-size: 0.94rem;">The key benefit: Claude can use <code>request_cowork_directory</code> to mount your local Google Drive folder directly. No uploading, no downloading, no copy-pasting between systems. The file just exists in both places simultaneously.</p>
-  </div>
-
-  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;" class="reveal">
-    <h4 style="font-size: 1rem; margin-bottom: 0.6rem;">Laptop vs. Desktop: Always-On Considerations</h4>
-    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;">If you're on a laptop, your Cowork sessions end when the lid closes. That's fine for most workflows since skills run fast enough to complete in a single sitting. But if you plan to run longer automations, scheduled tasks, or want Claude available throughout your workday without re-mounting folders every time your machine sleeps, a desktop (or a laptop docked at a desk with sleep disabled) is a better fit.</p>
-    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;">External SSDs work great on both, but laptops introduce a reliability variable: if the drive disconnects (you unplug it, the cable wiggles, or the laptop sleeps), Claude loses access to your files mid-session. If you're running a laptop, either keep it plugged in and awake during Cowork sessions or use an internal drive path instead of an external one.</p>
-    <p style="color: var(--text-muted); font-size: 0.94rem;"><strong>Bottom line:</strong> Start with whatever computer you have. A laptop with Google Drive Desktop and a consistent local folder structure will get you 90% of the way there. Optimize for always-on access later if your workflow demands it.</p>
+  <h3 style="font-size: 1.2rem; margin-top: 2.5rem; margin-bottom: 0.5rem;">Step 5: Set Up Your File System (Optional but Worth It)</h3>
+  <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.5rem;">Claude Cowork works with whatever file setup you already have, but if you want to get the most out of it, a little structure goes a long way. Here's what I use and why it matters:</p>
+  <div style="margin-top: 0.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem;" class="reveal">
+    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;"><strong>Local SSD storage.</strong> I run everything off an external SSD connected to my Mac. Skills, logs, transaction files, marketing assets. Local storage means Claude reads and writes files instantly without waiting on cloud sync. A 1TB portable SSD costs $60-80 and is the single best quality-of-life upgrade for Cowork.</p>
+    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;"><strong>Google Drive Desktop for sync.</strong> Google Drive Desktop mirrors your Drive folders as local directories. Claude writes files to a local folder, Drive syncs them to the cloud automatically. No manual uploading. No "save this then go upload it to Drive." It just works. If you use Dropbox or OneDrive, same concept applies.</p>
+    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.8rem;"><strong>Laptop vs. desktop.</strong> Cowork runs on your machine, and some workflows (browser automation, computer use) benefit from a larger screen. I use a MacBook with an external monitor. A desktop works too. The main thing: you need enough screen real estate to let Claude work in a browser while you watch or do other things. A 13-inch laptop screen with no external monitor will work but you'll feel cramped.</p>
+    <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0;"><strong>Folder structure.</strong> Create a root folder for all your Cowork files. Inside it: a Skills folder (your skill .md files), a Skill Logs folder (where Claude writes its memory), and a Transactions folder (or whatever your main work category is). When you start a Cowork session and grant folder access, point it at this root. The cleaner your file organization, the less time Claude spends hunting for things.</p>
   </div>
 
   <h3 style="font-size: 1.2rem; margin-top: 2.5rem; margin-bottom: 0.5rem;">Step 6: Build Your First Reusable Skill</h3>
   <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 0.5rem;">A "skill" is a reusable instruction set. You build it once, correct it over time, and trigger it whenever you need it. Every skill in my system started as a single prompt like the ones below. The difference between a prompt and a skill is iteration: you use it, fix what's wrong, and it gets better every time. These are designed to work regardless of your MLS, CRM, brokerage, or transaction management platform because Claude will ask you the right questions first.</p>
 
-<div class="skill-card has-example reveal" style="max-width: 100%;">
-  <div class="skill-card-name">New Listing Intake <span class="skill-tag">Starter Template</span></div>
-  <p>Complete listing intake skill. Upload a listing agreement and it handles document parsing, public records lookup, MLS content generation, MLS entry field-by-field, transaction platform creation, calendar events, and notification. Fill in the setup questions, save as .md, add as a Cowork skill.</p>
-  <button class="skill-example-toggle" onclick="toggleExample(this)">View the full skill template (copy-paste ready)</button>
-  <div class="skill-example">
-    <p class="example-note">This is a complete, production-ready skill template. Fill in the [PLACEHOLDER] values in the setup section with your information, save it as a .md file, and add it as a Cowork skill. The structure, logging, compliance rules, and MLS field mapping are all real.</p>
-    <button class="copy-btn" onclick="copyExample(this)">Copy to clipboard</button>
-    <a href="https://benwhetstone.github.io/ai-ops/listing-starter.md" download class="copy-btn" style="margin-left: 8px; text-decoration: none;">Download .md file</a>
+  <div class="skill-card has-example reveal" style="max-width: 100%;">
+    <div class="skill-card-name">New Listing Content Generator <span class="skill-tag">Starter Template</span></div>
+    <p>In my system, I upload a listing agreement and Claude handles everything from document parsing to MLS entry. This is the full production skill, sanitized so you can customize it for your market. Fill in the setup questions at the top, drop it in your skills folder, and you have an end-to-end listing workflow from day one.</p>
+    <button class="skill-example-toggle" onclick="toggleExample(this)">View the full skill template (copy-paste ready)</button>
+    <div class="skill-example">
+      <p class="example-note">This is the actual production skill with personal details replaced by [PLACEHOLDER] variables. Answer the 16 setup questions at the top, then save as a .md file in your skills folder.</p>
+      <button class="copy-btn" onclick="copyExample(this)">Copy to clipboard</button>
+      <a href="https://raw.githubusercontent.com/benwhetstone/ai-ops/main/listing-starter.md" download class="copy-btn" style="margin-left: 8px; text-decoration: none;">Download .md file</a>
 <pre>## SETUP: Answer These Before Using This Skill
 
 Before running this skill, answer these setup questions. Map each answer to the placeholder shown.
@@ -1436,7 +1422,7 @@ description: &gt;
 
 ## SUPERVISOR: Chief of Staff
 
-This skill reports to the Chief of Staff skill, which is the agent&#39;s master coordinator.
+This skill reports to the Chief of Staff skill, which is the agent&#x27;s master coordinator.
 
 - Chief of Staff routes requests here and passes cross-channel context before execution.
 - On completion, report results back clearly so Chief of Staff can close the loop.
@@ -1444,7 +1430,7 @@ This skill reports to the Chief of Staff skill, which is the agent&#39;s master 
 - SKILL LOG: `[YOUR_SKILL_LOGS_PATH]/Chief of Staff Skill/Skill Logs/new-listing-tool-log.txt`
 - UNIVERSAL LOG: `[YOUR_SKILL_LOGS_PATH]/Chief of Staff Skill/Skill Logs/UNIVERSAL_LOG.txt`
 - LISTING_LOG.txt: `[YOUR_SKILL_LOGS_PATH]/Chief of Staff Skill/LISTING_LOG.txt`
-- When in doubt about anything outside this skill&#39;s scope, defer to Chief of Staff.
+- When in doubt about anything outside this skill&#x27;s scope, defer to Chief of Staff.
 
 ---
 
@@ -1464,7 +1450,7 @@ Accuracy is more important than speed. Verify information in the transaction pla
 
 ## THREE-PHASE ARCHITECTURE
 
-This skill runs in three independent phases. Phase 1 requires the user&#39;s input. Phases 2 and 3 run autonomously once Phase 1 is complete. Phase 3 (Attachments &amp; Photos) can run separately -- days or weeks later -- when materials arrive.
+This skill runs in three independent phases. Phase 1 requires the user&#x27;s input. Phases 2 and 3 run autonomously once Phase 1 is complete. Phase 3 (Attachments &amp; Photos) can run separately -- days or weeks later -- when materials arrive.
 
 - **Phase 1: Intake** -- Read logs, request all access, ask all questions, generate MLS content for review.
 - **Phase 2: Autonomous Backend** -- Drive folders, transaction platform, public records lookup, MLS entry. Runs hands-free.
@@ -1477,7 +1463,7 @@ Trigger Phase 3 separately when user says &quot;attach docs for [address]&quot;,
 
 # PHASE 1: INTAKE (Requires User Input)
 
-Everything that needs the user&#39;s brain before the skill can run autonomously.
+Everything that needs the user&#x27;s brain before the skill can run autonomously.
 
 ## Step 1: Read Learning Logs
 
@@ -1487,7 +1473,7 @@ Read both logs before doing anything else:
 1b. **UNIVERSAL_LOG.txt** (Skill Logs folder) -- universal corrections
 2. **LISTING_LOG.txt** (path above) -- check for patterns, past mistakes, property-specific notes
 
-If LISTING_LOG.txt doesn&#39;t exist, create it with a header (see end of this skill for template).
+If LISTING_LOG.txt doesn&#x27;t exist, create it with a header (see end of this skill for template).
 
 ## Step 2: Request All Access
 
@@ -1510,11 +1496,11 @@ Immediately after reading logs, request access to everything the skill needs. Do
 
 **Request Google Calendar access** -- for adding listing dates to Admin Calendar
 
-If any access is denied or unavailable, note it and proceed with what&#39;s available. Don&#39;t stall.
+If any access is denied or unavailable, note it and proceed with what&#x27;s available. Don&#x27;t stall.
 
 ## Step 3: Parse the Listing Agreement
 
-Read the listing agreement (user will upload it or it&#39;s already in uploads). Extract:
+Read the listing agreement (user will upload it or it&#x27;s already in uploads). Extract:
 
 | Field | Notes |
 |-------|-------|
@@ -1560,7 +1546,7 @@ Generate three components using the Broker Synopsis (if uploaded), listing agree
 
 **Format:** Paragraph form only -- never bullet points.
 
-**Tone:** Write like a relaxed but polished agent selling the lifestyle, not the specs. Conversational, focused on the experience of living there. Show, don&#39;t tell -- paint a picture of daily life rather than listing attributes.
+**Tone:** Write like a relaxed but polished agent selling the lifestyle, not the specs. Conversational, focused on the experience of living there. Show, don&#x27;t tell -- paint a picture of daily life rather than listing attributes.
 
 **Content priorities:**
 - How people will actually live there -- fun, simplicity, location, daily life benefits
@@ -1583,7 +1569,7 @@ Generate three components using the Broker Synopsis (if uploaded), listing agree
 ### B. REALTOR REMARKS (Private -- use this exact text every time)
 
 ```
-Room sizes are estimates -- buyer must verify room sizes. We can&#39;t wait to do a deal with you! Please see Offer Instructions Form before submitting offers.
+Room sizes are estimates -- buyer must verify room sizes. We can&#x27;t wait to do a deal with you! Please see Offer Instructions Form before submitting offers.
 ```
 
 ### C. DRIVING DIRECTIONS
@@ -1654,7 +1640,7 @@ Upload all renamed listing documents to transaction platform. These go in the &q
 
 Add checklist for the listing. Checklist items include:
 - Request LB and Sign
-- Email to seller going live (wait if pics aren&#39;t in yet)
+- Email to seller going live (wait if pics aren&#x27;t in yet)
 
 ## Step 9: Public Records -- Pull Property Data
 
@@ -1665,7 +1651,7 @@ Search for the property. Pull:
 - Lot size, Year built
 - Garage / parking details
 - Pool details
-- RVM (for user&#39;s reference, not for MLS)
+- RVM (for user&#x27;s reference, not for MLS)
 - Tax ID number (needed for MLS entry)
 - Any special features
 
@@ -1691,15 +1677,15 @@ Not every field applies to every property. Use property type and available data 
 
 **SKIP the field if:**
 - The property type makes it irrelevant (e.g., Pool tab fields for Vacant Land, Interior tab for Vacant Land, Rooms tab for Vacant Land)
-- The field is optional AND the data isn&#39;t available from any source (Public Records, photos, listing agreement, disclosures)
-- The field has a clear &quot;N/A&quot; or &quot;None&quot; option and that&#39;s the truthful answer
+- The field is optional AND the data isn&#x27;t available from any source (Public Records, photos, listing agreement, disclosures)
+- The field has a clear &quot;N/A&quot; or &quot;None&quot; option and that&#x27;s the truthful answer
 
 **DO NOT SKIP if:**
 - The field is required by the MLS system (run VALIDATE to check)
-- The data exists in your sources but would take effort to enter -- that&#39;s not a reason to skip
-- You&#39;re unsure whether it applies -- fill it with best available data and flag it in the log
+- The data exists in your sources but would take effort to enter -- that&#x27;s not a reason to skip
+- You&#x27;re unsure whether it applies -- fill it with best available data and flag it in the log
 
-**When in doubt:** Fill it. You can always correct later; you can&#39;t un-skip a field you forgot about.
+**When in doubt:** Fill it. You can always correct later; you can&#x27;t un-skip a field you forgot about.
 
 ### 10c. Fill in All Tabs -- Field by Field
 
@@ -1707,7 +1693,7 @@ Work through each tab. **SAVE AS INCOMPLETE after every 2-3 tabs** to avoid losi
 
 After filling in what you can, **hit VALIDATE** so it shows which required fields are missing.
 
-**DON&#39;T COPY PREVIOUS MLS LISTINGS -- information can vary.** Use the listing agreement, public records, photos, and verified data only. (It IS OK to reference previous listings for things like total sqft from prev listing, flood zone codes, HOA contacts, and community amenity info.)
+**DON&#x27;T COPY PREVIOUS MLS LISTINGS -- information can vary.** Use the listing agreement, public records, photos, and verified data only. (It IS OK to reference previous listings for things like total sqft from prev listing, flood zone codes, HOA contacts, and community amenity info.)
 
 ---
 
@@ -1721,7 +1707,7 @@ Source: Exclusive Right to Sell Listing Agreement
 | List Price | From listing agreement |
 | Special Sale Provision | Usually &quot;No&quot; |
 | Floors in Unit | From pics or prev listings |
-| **Schools** | **Look up using the school locator website for the property&#39;s county** |
+| **Schools** | **Look up using the school locator website for the property&#x27;s county** |
 
 **School Locator:** Search &quot;[County Name] school locator&quot; (e.g., &quot;Hillsborough County school locator&quot;). Enter the property address. Record the assigned Elementary, Middle, and High School for the MLS fields.
 
@@ -1836,7 +1822,7 @@ Source: Photos, Public Records, agent input
 |-------|-------|
 | List Agent 2 | [YOUR_NAME] |
 | List Team ID | [YOUR_MLS_TEAM_ID] |
-| Seller&#39;s preferred closing agent | **From Phase 1 answer (title company)** |
+| Seller&#x27;s preferred closing agent | **From Phase 1 answer (title company)** |
 | Dual | No |
 | Showing Info | **From Phase 1 answer (Vacant/Tenant/Owner)** |
 | Showing Instructions | &quot;Apt only, use ShowingTime button&quot; |
@@ -1846,7 +1832,7 @@ Source: Photos, Public Records, agent input
 | Realtor Information | AS IS |
 
 **Realtor Only Remarks** (verbatim):
-&gt; Room sizes are estimates buyer must verify room sizes. We can&#39;t wait to do a deal with you! Please see offer instructions form before submitting offers.
+&gt; Room sizes are estimates buyer must verify room sizes. We can&#x27;t wait to do a deal with you! Please see offer instructions form before submitting offers.
 
 **Driving Directions:** From Phase 1 approved content.
 
@@ -1885,7 +1871,7 @@ User installs signs themselves -- no need to email anyone for sign installation.
 After Phase 2 is complete (MLS saved as Incomplete, transaction platform done, Drive organized):
 
 **Text user at [YOUR_PHONE]** via iMessage:
-&gt; &quot;MLS listing created for [Property Address] -- MLS# [number]. Saved as Incomplete. Transaction platform transaction created. Drive folder set up. Ready for your review. [If photos/attachments still needed: &#39;Photos and/or attachments still pending -- run Phase 3 when ready.&#39;]&quot;
+&gt; &quot;MLS listing created for [Property Address] -- MLS# [number]. Saved as Incomplete. Transaction platform transaction created. Drive folder set up. Ready for your review. [If photos/attachments still needed: &#x27;Photos and/or attachments still pending -- run Phase 3 when ready.&#x27;]&quot;
 
 ## Step 14: Update Logs
 
@@ -1906,7 +1892,7 @@ Title Company: [from Phase 1]
 LB Code: [YOUR_LOCKBOX_CODE]
 Phase 3 Status: [Pending / Not Needed]
 Notes: [any notable details, edge cases, or issues]
-Last Updated: [today&#39;s date]
+Last Updated: [today&#x27;s date]
 ================================================================================
 ```
 
@@ -1955,7 +1941,7 @@ If this is a new Cowork session, re-request all access:
 ## Step 18: Upload Photos
 
 Upload to both:
-- **Google Drive:** listing&#39;s Drive folder (create &quot;Listing Pics&quot; subfolder if needed)
+- **Google Drive:** listing&#x27;s Drive folder (create &quot;Listing Pics&quot; subfolder if needed)
 - **MLS Listing:** Photo upload section in MLS (navigate to the Incomplete listing via ADD/EDIT -&gt; Incomplete)
 
 **Photo order (follow this sequence):**
@@ -1969,7 +1955,7 @@ Upload to both:
 6. Laundry
 7. Outside / back yard
 8. Amenities
-9. Community photos -- ask user for community amenity photos if not already in the transaction&#39;s Listing Files folder. If they have them in Google Drive (team Main Drive &gt; Listing Pics &gt; Community Amenity Pictures), they&#39;ll need to download and provide them.
+9. Community photos -- ask user for community amenity photos if not already in the transaction&#x27;s Listing Files folder. If they have them in Google Drive (team Main Drive &gt; Listing Pics &gt; Community Amenity Pictures), they&#x27;ll need to download and provide them.
 
 **Photo rules:**
 - Minimum 1 photo; maximum 100
@@ -1983,13 +1969,13 @@ Upload to both:
 Attach these to the MLS listing:
 - CDD Disclosure (if applicable)
 - HOA Disclosure
-- Property Disclosure (seller&#39;s disclosure)
+- Property Disclosure (seller&#x27;s disclosure)
 - **Offer Instructions Form** -- ask user to provide the correct form:
   - **`[YOUR_OFFER_INSTRUCTIONS_FORM_A]`** if title company = [YOUR_PREFERRED_TITLE_COMPANY_A]
   - **`[YOUR_OFFER_INSTRUCTIONS_FORM_B]`** if title company = [YOUR_PREFERRED_TITLE_COMPANY_B]
   - These live in Google Drive: team Main Drive &gt; Forms and Information &gt; Offer Instructions For Our Listings. User may need to download and upload them.
 
-If on the seller side and we don&#39;t have the seller&#39;s property disclosure, we always need to draft a **seller non-occupancy disclosure** for compliance.
+If on the seller side and we don&#x27;t have the seller&#x27;s property disclosure, we always need to draft a **seller non-occupancy disclosure** for compliance.
 
 **&gt;&gt;&gt; SAVE AFTER UPLOADING ATTACHMENTS &lt;&lt;&lt;**
 
@@ -2000,7 +1986,7 @@ If on the seller side and we don&#39;t have the seller&#39;s property disclosure
 
 ## Step 21: Update Logs
 
-Update the listing&#39;s entry in LISTING_LOG.txt:
+Update the listing&#x27;s entry in LISTING_LOG.txt:
 ```
 [YYYY-MM-DD] | PHASE 3 COMPLETE -- Photos &amp; Attachments Uploaded
 ```
@@ -2035,9 +2021,9 @@ Add any lessons learned to both LISTING_LOG.txt and new-listing-tool-log.txt.
 
 ## PRICE MODIFICATIONS
 
-If modifying the listing price after it&#39;s live:
+If modifying the listing price after it&#x27;s live:
 - Use the **last MLS price** (not the contract price) as the reference
-- The modification document doesn&#39;t need to be Fully Executed to change MLS price -- do it RIGHT AWAY once verbal confirmation is received
+- The modification document doesn&#x27;t need to be Fully Executed to change MLS price -- do it RIGHT AWAY once verbal confirmation is received
 - Update: MLS (Add/Edit -&gt; pending -&gt; close date), transaction platform, and notify all vendors
 
 ---
@@ -2062,7 +2048,7 @@ If modifying the listing price after it&#39;s live:
 
 ## LISTING_LOG TEMPLATE (First Run Only)
 
-If LISTING_LOG.txt doesn&#39;t exist, create it with this header:
+If LISTING_LOG.txt doesn&#x27;t exist, create it with this header:
 ```
 ================================================================================
 LISTING_LOG -- [YOUR_TEAM_NAME] / New Listing Tool
@@ -2091,7 +2077,7 @@ Read BOTH files:
 Apply everything. These are fixes from prior runs that must not be repeated.
 
 Also check for any `[PROMOTE]` entries in the skill log. These are corrections from prior
-sessions that should have been embedded in this skill but weren&#39;t (usually due to low context).
+sessions that should have been embedded in this skill but weren&#x27;t (usually due to low context).
 If you find any, embed them into the relevant step of this skill before proceeding with the run.
 
 ### Writing (End of Run)
@@ -2115,15 +2101,18 @@ Categories: CORRECTION, PREFERENCE, INSIGHT, WORKFLOW, DECISION, CONTEXT, ERROR
 
 Only write to UNIVERSAL_LOG.txt if the correction applies to ALL skills (rare).
 All logs are append-only. Never overwrite.
+</pre>
+    </div>
+  </div>
 
-<div class="skill-card has-example reveal" style="max-width: 100%;">
-  <div class="skill-card-name">Social Media Posts + Canva <span class="skill-tag">Starter Template</span></div>
-  <p>Complete social media skill with Canva integration. Writes posts in your voice, creates matching Canva images, generates separate versions for Facebook/Instagram and Google Business Profile. Includes voice rules, feature translation formulas, post templates for every milestone, and a quality checklist.</p>
-  <button class="skill-example-toggle" onclick="toggleExample(this)">View the full skill template (copy-paste ready)</button>
-  <div class="skill-example">
-    <p class="example-note">Complete social media skill template with Canva integration. Fill in [PLACEHOLDER] values for your brand voice, hashtags, and template IDs. Includes post formats for active listings, under contract, just sold, and coming soon.</p>
-    <button class="copy-btn" onclick="copyExample(this)">Copy to clipboard</button>
-    <a href="https://benwhetstone.github.io/ai-ops/social-starter.md" download class="copy-btn" style="margin-left: 8px; text-decoration: none;">Download .md file</a>
+  <div class="skill-card has-example reveal" style="max-width: 100%;">
+    <div class="skill-card-name">Social Media Post + Canva Image <span class="skill-tag">Starter Template</span></div>
+    <p>In my system, I say "Go Social Media Post" with an address and the whole pipeline runs: post copy in my voice, Canva template with property photo swapped in, separate versions for Facebook/Instagram and Google Business Profile. This is the full skill with voice rules, feature translation formulas, and post templates for every milestone type.</p>
+    <button class="skill-example-toggle" onclick="toggleExample(this)">View the full skill template (copy-paste ready)</button>
+    <div class="skill-example">
+      <p class="example-note">This is the actual production skill with personal details replaced by [PLACEHOLDER] variables. Answer the 15 setup questions at the top, then save as a .md file in your skills folder.</p>
+      <button class="copy-btn" onclick="copyExample(this)">Copy to clipboard</button>
+      <a href="https://raw.githubusercontent.com/benwhetstone/ai-ops/main/social-starter.md" download class="copy-btn" style="margin-left: 8px; text-decoration: none;">Download .md file</a>
 <pre>## SETUP: Answer These Before Using This Skill
 
 Before running this skill, provide answers to these questions so the skill can personalize all content:
@@ -2156,7 +2145,7 @@ description: Creates social media posts for [YOUR_TEAM_NAME] real estate listing
 
 # Social Media Posts — [YOUR_TEAM_NAME]
 
-You write social media posts AND create social media images for [YOUR_NAME]&#39;s
+You write social media posts AND create social media images for [YOUR_NAME]&#x27;s
 real estate brand. Every post must sound like [YOUR_NAME] actually wrote it. If it reads
 like a generic realtor post, it failed.
 
@@ -2165,7 +2154,7 @@ like a generic realtor post, it failed.
 
 ## BOOT SEQUENCE — Run First, Every Time
 
-Request ALL access and tools upfront so the user doesn&#39;t sit through mid-workflow
+Request ALL access and tools upfront so the user doesn&#x27;t sit through mid-workflow
 permission prompts. Do this silently before any creative work.
 
 ### Step 1: Request Tool Access (parallel)
@@ -2191,7 +2180,7 @@ from the TRANSACTION_LOG FIRST:
 - Extract: address, sale price (NOT listing price), property type, beds, baths,
   sqft, key features, transaction side (buyer or seller deal), closing date
 - If sale price is not in the log, check the AS IS Contract PDF in the
-  transaction&#39;s Drive folder (Archive if closed): look for &quot;PURCHASE PRICE&quot;
+  transaction&#x27;s Drive folder (Archive if closed): look for &quot;PURCHASE PRICE&quot;
   on page 1 of the contract
 - NEVER use the listing price from an OH flyer or MLS as the sale price.
   The contract price is the only source of truth for sold posts.
@@ -2235,9 +2224,9 @@ Every social media post gets a matching Canva image. This is not optional.
 3. **Perform edits** in a single `perform-editing-operations` call:
    - Replace address text element with the property address
    - Replace hero image fill with the property photo asset_id
-   - Agent info and logos stay as-is (they&#39;re already correct)
+   - Agent info and logos stay as-is (they&#x27;re already correct)
 4. **Show the user the preview thumbnail** from the editing transaction response.
-5. **Wait for the user&#39;s approval** before committing.
+5. **Wait for the user&#x27;s approval** before committing.
 6. **Commit** the editing transaction only after explicit approval.
 7. **Cancel** the editing transaction if the user wants changes (make changes,
    re-show preview, re-confirm).
@@ -2300,7 +2289,7 @@ NEVER include URLs (southshoreteam.info, links, etc.) in social media post text 
    Suite composer. Please attach the image to the Media section. The exported
    image is in Canva (design ID: [ID]) or you can download it from the export
    link I provided.&quot; PAUSE and wait for the user to confirm the image is attached.
-6. After the user confirms image is attached, click Publish (with the user&#39;s permission)
+6. After the user confirms image is attached, click Publish (with the user&#x27;s permission)
 7. Open Lofty social media tool for GMB post, repeat with Version 2 copy
 8. Confirm all posts are live with the user
 
@@ -2322,7 +2311,7 @@ the Meta composer. Just ask Ben to attach it.
 
 ## GLOBAL RULES (Apply to Every Post)
 
-### Agent&#39;s Voice
+### Agent&#x27;s Voice
 
 This is the non-negotiable foundation. Every word must pass the test: would the
 agent actually say this?
@@ -2342,7 +2331,7 @@ agent actually say this?
 - Corporate real estate speak
 - Over-explanation of jokes or observations
 - Asking trailing questions
-- &quot;Don&#39;t miss out!&quot; or urgency language
+- &quot;Don&#x27;t miss out!&quot; or urgency language
 - Telling people how to feel
 - Em dashes anywhere
 - Bullet points (use dashes only)
@@ -2355,16 +2344,16 @@ Think about what the feature actually MEANS for the person living there, then
 say it the way Ben would say it at a dinner party.
 
 Examples:
-- Flood Zone X: &quot;Flood Zone X means your insurance isn&#39;t going to ruin your budget&quot;
-- New Roof/HVAC: &quot;2022 roof and 2023 HVAC so you&#39;re not inheriting someone else&#39;s deferred maintenance&quot;
+- Flood Zone X: &quot;Flood Zone X means your insurance isn&#x27;t going to ruin your budget&quot;
+- New Roof/HVAC: &quot;2022 roof and 2023 HVAC so you&#x27;re not inheriting someone else&#x27;s deferred maintenance&quot;
 - Three-Car Garage: &quot;Three-car garage means no more rock-paper-scissors for who parks outside when it rains&quot;
-- Pool: &quot;Saltwater pool with heater AND chiller so you&#39;re swimming year-round, not just pretending you will&quot;
-- Open Floor Plan: &quot;Open floor plan means you can cook dinner and still know what Netflix show everyone&#39;s arguing about&quot;
-- Split Floor Plan: &quot;Split floor plan means the kids can be loud and you won&#39;t hear it from the primary suite&quot;
-- Updated Kitchen: &quot;Kitchen with granite counters and a gas cooktop because you&#39;re not heating water on an electric burner like it&#39;s 1987&quot;
+- Pool: &quot;Saltwater pool with heater AND chiller so you&#x27;re swimming year-round, not just pretending you will&quot;
+- Open Floor Plan: &quot;Open floor plan means you can cook dinner and still know what Netflix show everyone&#x27;s arguing about&quot;
+- Split Floor Plan: &quot;Split floor plan means the kids can be loud and you won&#x27;t hear it from the primary suite&quot;
+- Updated Kitchen: &quot;Kitchen with granite counters and a gas cooktop because you&#x27;re not heating water on an electric burner like it&#x27;s 1987&quot;
 - Large Lot: &quot;Corner lot with zero neighbors behind you which means privacy without paying for it&quot;
 - Historic/Character: &quot;Restored bungalow charm with modern systems meaning you get the vibe without the surprise $18K HVAC replacement&quot;
-- Dry Bar: &quot;Dry bar with beverage fridge because you&#39;re an adult and you entertain like one&quot;
+- Dry Bar: &quot;Dry bar with beverage fridge because you&#x27;re an adult and you entertain like one&quot;
 
 These are examples, not templates. Generate fresh translations every time using
 the same formula. The goal is making specs feel like real life.
@@ -2376,7 +2365,7 @@ Pattern: &quot;Has the [quality] of [place A], the [quality] of [place B], and t
 Example: &quot;This house has the curb appeal of Old Seminole Heights, the lot size of New Tampa, and somehow the price of Brandon. They renovated it right.&quot;
 
 Use this when a property genuinely defies its price point or location expectations.
-Don&#39;t force it.
+Don&#x27;t force it.
 
 ### Contact Block
 
@@ -2430,7 +2419,7 @@ DM me here or call anytime
 
 **Waterfront/Pool Homes:**
 - Lead with lifestyle: launch kayaks, sunset dock drinks, entertaining
-- Don&#39;t just say &quot;pool,&quot; say what they&#39;ll DO with it
+- Don&#x27;t just say &quot;pool,&quot; say what they&#x27;ll DO with it
 
 **Historic/Character Properties:**
 - Focus on what makes it NOT cookie-cutter
@@ -2465,7 +2454,7 @@ Opening paragraph hook. 2-3 sentences creating a scene or feeling.
 
 Want to see it?
 
-Comment SEND IT below and I&#39;ll send you the full details
+Comment SEND IT below and I&#x27;ll send you the full details
 
 -Feature benefit with emoji
 -Feature benefit with emoji
@@ -2489,7 +2478,7 @@ Listed by: [YOUR_NAME]
 - 2-3 sentences maximum
 - CTA goes immediately after opening paragraph, BEFORE feature list
 - Exactly 3 dash features with emojis
-- Each feature answers &quot;so what?&quot; in Ben&#39;s voice
+- Each feature answers &quot;so what?&quot; in Ben&#x27;s voice
 
 ### CTA Variations
 
@@ -2497,21 +2486,21 @@ Standard:
 ```
 Want to see it?
 
-Comment SEND IT below and I&#39;ll send you the full details
+Comment SEND IT below and I&#x27;ll send you the full details
 ```
 
 Multiple similar properties available:
 ```
 Think this might be the one?
 
-Comment SEND IT and I&#39;ll send you everything I&#39;ve got like this
+Comment SEND IT and I&#x27;ll send you everything I&#x27;ve got like this
 ```
 
 High-interest properties:
 ```
 Interested?
 
-Comment SEND IT below and I&#39;ll send you the breakdown before someone else grabs it
+Comment SEND IT below and I&#x27;ll send you the breakdown before someone else grabs it
 ```
 
 ---
@@ -2522,7 +2511,7 @@ Comment SEND IT below and I&#39;ll send you the breakdown before someone else gr
 **Trigger:** &quot;Under contract social post go&quot; or transaction status post with under contract status
 
 NOTE: Under Contract posts do NOT include a feature list. The property is off
-the market. There&#39;s nothing to sell. Keep it tight: opener, notable detail,
+the market. There&#x27;s nothing to sell. Keep it tight: opener, notable detail,
 CTA for the next client.
 
 ### Format
@@ -2545,28 +2534,28 @@ Listed by: [YOUR_NAME]
 
 ### Rules
 - NO feature list. The property is already under contract.
-- Rotate opening language (don&#39;t repeat the same phrasing):
+- Rotate opening language (don&#x27;t repeat the same phrasing):
   - &quot;Another one off the market! [Address] is officially under contract and headed to the closing table.&quot;
-  - &quot;[Address] is under contract! We&#39;re headed to closing.&quot;
-  - &quot;We&#39;ve got another one locked in! [Address] is under contract.&quot;
-  - &quot;[Address] just went under contract and we&#39;re moving toward closing.&quot;
-  - &quot;This one&#39;s officially off the market! [Address] is under contract.&quot;
+  - &quot;[Address] is under contract! We&#x27;re headed to closing.&quot;
+  - &quot;We&#x27;ve got another one locked in! [Address] is under contract.&quot;
+  - &quot;[Address] just went under contract and we&#x27;re moving toward closing.&quot;
+  - &quot;This one&#x27;s officially off the market! [Address] is under contract.&quot;
 - Add one notable detail about the property with varied phrasing
 - CTA options for second paragraph:
-  - &quot;Thinking about selling? Now&#39;s the time!&quot;
-  - &quot;If you&#39;ve been wondering what your home is worth or considering a move, let&#39;s chat.&quot;
+  - &quot;Thinking about selling? Now&#x27;s the time!&quot;
+  - &quot;If you&#x27;ve been wondering what your home is worth or considering a move, let&#x27;s chat.&quot;
   - &quot;The market is moving and buyers are ready!&quot;
 
 ### Transaction Type Context (CRITICAL)
-- If Ben represented the BUYER: frame the post to appeal to sellers. Do not frame from buyer&#39;s perspective.
+- If Ben represented the BUYER: frame the post to appeal to sellers. Do not frame from buyer&#x27;s perspective.
 - If Ben represented the SELLER (his listing): frame around the successful contract on his listing.
 - Ask for context if not provided.
 
 ### Alternative CTA (ManyChat engagement version)
 ```
-This one&#39;s headed to closing, but I&#39;ve got others worth seeing.
+This one&#x27;s headed to closing, but I&#x27;ve got others worth seeing.
 
-Comment SEND IT and I&#39;ll show you what&#39;s available
+Comment SEND IT and I&#x27;ll show you what&#x27;s available
 ```
 Use this version when you want ManyChat engagement instead of the seller-focused CTA.
 
@@ -2624,11 +2613,11 @@ Sold by: [YOUR_NAME]
 ```
 [Emoji] CITY IN ALL CAPS | COMING SOON [Emoji]
 
-Opening hook teasing what&#39;s about to hit the market. 2-3 sentences.
+Opening hook teasing what&#x27;s about to hit the market. 2-3 sentences.
 
 Want first access?
 
-Comment SEND IT below and I&#39;ll send you the details before it goes live
+Comment SEND IT below and I&#x27;ll send you the details before it goes live
 
 -Feature benefit with emoji
 -Feature benefit with emoji
@@ -2646,7 +2635,7 @@ Listed by: [YOUR_NAME]
 ### Rules
 - Tease the property without full details
 - Create anticipation
-- Style: &quot;This one&#39;s about to hit the market...&quot; or brief lifestyle hook
+- Style: &quot;This one&#x27;s about to hit the market...&quot; or brief lifestyle hook
 
 ---
 
@@ -2663,7 +2652,7 @@ Before outputting any post, verify every item:
 6. Blank lines before and after CTA
 7. Feature list ONLY on active listings and coming soon posts (3 dash features with emojis)
 8. NO feature list on Just Sold or Under Contract posts (property is off market, nothing to sell)
-9. Each feature (when used) answers &quot;so what?&quot; in Ben&#39;s voice
+9. Each feature (when used) answers &quot;so what?&quot; in Ben&#x27;s voice
 10. Plain dashes used (no bullet points)
 11. Blank line before contact block
 12. Correct contact block version used
@@ -2675,7 +2664,7 @@ Before outputting any post, verify every item:
 18. No em dashes anywhere
 19. No excessive exclamation marks
 20. No beds/baths/sqft in headline
-21. No price in body text for active listings (it&#39;s in headline)
+21. No price in body text for active listings (it&#x27;s in headline)
 22. Transaction type (buyer vs seller deal) correctly determines messaging angle
 23. Specific details with years when relevant
 24. Features translated to benefits, not just listed (active/coming soon only)
@@ -2692,25 +2681,28 @@ When the user provides listing data:
 1. Identify the ONE most compelling lifestyle hook (not feature list, the FEELING)
 2. Determine post type from status (active, under contract, sold, coming soon)
 3. Determine transaction side if applicable (buyer deal vs seller deal) and ask if unclear
-4. Write opening paragraph in Ben&#39;s voice (observational, specific, creates scene)
+4. Write opening paragraph in Ben&#x27;s voice (observational, specific, creates scene)
 5. Insert correct CTA for post type in correct position
 6. Select 3 best features and translate them (each must answer &quot;so what?&quot; with wry observation)
-7. Use emojis that enhance, don&#39;t replace, the message
+7. Use emojis that enhance, don&#x27;t replace, the message
 8. Select correct contact block version
 9. Set correct agent attribution prefix
 10. Build hashtag block per global rules
 11. Ensure proper spacing between all sections
 12. Run quality checklist
 13. Confirm no prohibited language
+</pre>
+    </div>
+  </div>
 
-<div class="skill-card has-example reveal" style="max-width: 100%;">
-  <div class="skill-card-name">New Transaction Processing <span class="skill-tag">Starter Template</span></div>
-  <p>Complete transaction onboarding skill. Upload a purchase contract and it parses documents, renames files, organizes Google Drive, enters the transaction in your management platform, drafts a kickoff email to all parties, adds key dates to your calendar, and logs everything.</p>
-  <button class="skill-example-toggle" onclick="toggleExample(this)">View the full skill template (copy-paste ready)</button>
-  <div class="skill-example">
-    <p class="example-note">Complete transaction onboarding skill template. Fill in the [PLACEHOLDER] values, save as .md, and add as a Cowork skill. Covers contract parsing, document renaming, Drive organization, transaction platform entry, email drafting, and calendar events.</p>
-    <button class="copy-btn" onclick="copyExample(this)">Copy to clipboard</button>
-    <a href="https://benwhetstone.github.io/ai-ops/transaction-starter.md" download class="copy-btn" style="margin-left: 8px; text-decoration: none;">Download .md file</a>
+  <div class="skill-card has-example reveal" style="max-width: 100%;">
+    <div class="skill-card-name">New Transaction Onboarding <span class="skill-tag">Starter Template</span></div>
+    <p>In my system, I upload a purchase contract and the skill handles document parsing, file renaming, Drive folder creation, transaction platform entry, kickoff email to all parties, calendar dates, and a text confirmation when it's done. This is the full production skill covering every step of that pipeline.</p>
+    <button class="skill-example-toggle" onclick="toggleExample(this)">View the full skill template (copy-paste ready)</button>
+    <div class="skill-example">
+      <p class="example-note">This is the actual production skill with personal details replaced by [PLACEHOLDER] variables. Answer the 15 setup questions at the top, then save as a .md file in your skills folder.</p>
+      <button class="copy-btn" onclick="copyExample(this)">Copy to clipboard</button>
+      <a href="https://raw.githubusercontent.com/benwhetstone/ai-ops/main/transaction-starter.md" download class="copy-btn" style="margin-left: 8px; text-decoration: none;">Download .md file</a>
 <pre>## SETUP: Answer These Before Using This Skill
 
 This skill requires personal and platform information to operate. Before triggering this skill, provide answers to the following setup questions:
@@ -2758,9 +2750,9 @@ This skill reports to the Chief of Staff skill, which is the master coordinator.
 - On completion, report results back clearly so Chief of Staff can close the loop with the user.
 - If this skill writes to a log (TRANSACTION_LOG, COACHING_LOG, etc.), each skill reads its own log at start
   and reads it in future sessions for cross-skill awareness.
-- A profile document contains the user&#39;s full personality and decision-making profile (see setup section for path).
+- A profile document contains the user&#x27;s full personality and decision-making profile (see setup section for path).
   Read it if you need personality context for tone, communication style, or judgment calls.
-- When in doubt about anything outside this skill&#39;s scope, defer to Chief of Staff.
+- When in doubt about anything outside this skill&#x27;s scope, defer to Chief of Staff.
 
 ---
 
@@ -2778,7 +2770,7 @@ This skill automates the complete intake and onboarding workflow for a new real 
 The user will sometimes ask you to execute only specific steps of this skill (e.g., &quot;just do the file renaming&quot; or &quot;add the calendar events&quot;). When this happens:
 
 - Execute the requested steps
-- Also execute any **supporting steps those steps depend on** — for example, if asked to add calendar dates, you still need to read the contract to get the dates (Step 2) even if you&#39;re not doing the full transaction platform entry
+- Also execute any **supporting steps those steps depend on** — for example, if asked to add calendar dates, you still need to read the contract to get the dates (Step 2) even if you&#x27;re not doing the full transaction platform entry
 - Always do Step 0 (read the Transaction Log) regardless of which steps are requested — it takes seconds and the corrections there apply to everything
 - Always do the &quot;After Completion&quot; log update at the end, even on partial runs — the log should reflect every run
 
@@ -2791,7 +2783,7 @@ The goal is to be smart about dependencies, not mechanical about skipping. If a 
 
 ### Step A: Mount and Read the Transaction Log
 
-Use `request_cowork_directory` to mount the folder containing this skill&#39;s transaction log file:
+Use `request_cowork_directory` to mount the folder containing this skill&#x27;s transaction log file:
 ```
 [YOUR_TRANSACTIONS_PATH]
 ```
@@ -2825,7 +2817,7 @@ Send ONE message asking the user for both of these upfront. Do not start any wor
    (Check the TRANSACTION_LOG — if specific paths are referenced that are not in the Transactions
    root, name them explicitly so the user can confirm or redirect.)
 
-Wait for the user&#39;s response before proceeding.
+Wait for the user&#x27;s response before proceeding.
 
 - Browser confirmed running → proceed with all browser-based steps as normal
 - Browser not running → skip browser-dependent steps; flag as unverified in output
@@ -2844,7 +2836,7 @@ Append to TRANSACTION_LOG.txt using `cat &gt;&gt;` (never overwrite). The log is
 
 Already done in the PERMISSIONS &amp; LOG section above. Apply everything relevant.
 TRANSACTION_LOG contains deal data and run notes. Standing corrections and skill behavior fixes are in the Skill Logs folder.
-If something unusual comes up mid-run that&#39;s not covered, check back before proceeding.
+If something unusual comes up mid-run that&#x27;s not covered, check back before proceeding.
 
 ---
 
@@ -2857,13 +2849,13 @@ This step happens **after parsing the property address in Step 2**, since the fo
 2. Locate the subfolder for this property address (it may already exist, or you may need to create it in Step 4)
 3. Once the folder exists, ask the user to select it as the working folder:
 
-   &gt; &quot;I found the transaction folder in Google Drive for [address]. Since you have Drive Desktop, please select that folder on your computer using the folder picker — I&#39;ll save the renamed docs directly into it and Drive will sync them automatically.&quot;
+   &gt; &quot;I found the transaction folder in Google Drive for [address]. Since you have Drive Desktop, please select that folder on your computer using the folder picker — I&#x27;ll save the renamed docs directly into it and Drive will sync them automatically.&quot;
 
 4. Use `request_cowork_directory` to open the folder picker. The user navigates to their local Google Drive → [YOUR_DRIVE_ROOT] → Transactions → [address folder] and selects it.
 
 Once selected, all renamed files in Step 3 go directly into that folder. Drive Desktop handles the sync — no upload/download needed.
 
-**If the user can&#39;t locate it or skips:** Fall back to saving to the VM outputs folder and provide `computer://` links for manual upload.
+**If the user can&#x27;t locate it or skips:** Fall back to saving to the VM outputs folder and provide `computer://` links for manual upload.
 
 ---
 
@@ -2896,7 +2888,7 @@ When the user uploads documents, identify each one by type:
 | Referral Fee Disclosure | Referral agent info |
 | Prequalification / Approval Letter | Lender info only — no SkySlope checklist slot |
 | Addendum (Inspection, Financing, HOA, etc.) | Upload to SkySlope checklist |
-| Seller&#39;s Disclosure | Upload to SkySlope checklist |
+| Seller&#x27;s Disclosure | Upload to SkySlope checklist |
 | HOA Disclosure / Docs | Upload to SkySlope checklist |
 | Lead-Based Paint Disclosure | Upload to SkySlope checklist |
 | Any other signed documents | Upload to SkySlope checklist |
@@ -2905,7 +2897,7 @@ After cataloging, ask:
 
 &gt; &quot;Is there anything special I should know about this transaction?&quot;
 
-Wait for the user&#39;s answer. Note any special circumstances — cash deal, investor buyer, short timeline, unusual contingencies — and factor them into all subsequent steps.
+Wait for the user&#x27;s answer. Note any special circumstances — cash deal, investor buyer, short timeline, unusual contingencies — and factor them into all subsequent steps.
 
 ---
 
@@ -2935,7 +2927,7 @@ Fields that must be visually confirmed before recording:
 - **Any other contingency deadlines** (HOA approval, appraisal, etc.)
 - **Buyer name(s)**
 - **Seller name(s)**
-- **Buyer&#39;s agent:** name, brokerage, email, phone (if listed)
+- **Buyer&#x27;s agent:** name, brokerage, email, phone (if listed)
 - **Listing agent:** name, brokerage, email, phone (if listed)
 - **Referral agent:** if a Referral Fee Disclosure was uploaded, extract name, brokerage, email, and referral fee %
 
@@ -2948,10 +2940,10 @@ Fields that must be visually confirmed before recording:
 - **Loan officer name, company, email, phone**
 
 ### Transaction Type:
-- User is the **Buyer&#39;s Agent** → transaction type = **Purchase**
+- User is the **Buyer&#x27;s Agent** → transaction type = **Purchase**
 - User is the **Listing Agent** → transaction type = **Listing**
 
-User&#39;s info is always:
+User&#x27;s info is always:
 - Name: [YOUR_NAME] | Brokerage: [YOUR_BROKERAGE]
 - Email: [YOUR_EMAIL] | Phone: [YOUR_PHONE]
 
@@ -3037,7 +3029,7 @@ Record before proceeding:
 Use **Create New → Transaction** from the dashboard. Searching for the transaction takes you to the forms system — use Create New instead. The MLS lookup during creation auto-populates property data; verify it against the contract before proceeding.
 
 When prompted for representation type, select based on transaction type:
-- Purchase (user is buyer&#39;s agent): select **Purchase**
+- Purchase (user is buyer&#x27;s agent): select **Purchase**
 - Listing (user is listing agent): select **Listing**
 
 ### Work Through Each Tab
@@ -3051,11 +3043,11 @@ When prompted for representation type, select based on transaction type:
 Work through each sub-section in order:
 
 **Buyers and Sellers:** Add all buyers and sellers using contact info from Forms File Details.
-- If a buyer has no phone on file, use a co-buyer&#39;s phone as a placeholder
+- If a buyer has no phone on file, use a co-buyer&#x27;s phone as a placeholder
 
 **Agents:**
 - Listing Agent: full name (verify against Forms — MLS sometimes shortens it), brokerage, email, phone
-- Buyer&#39;s Agent: User&#39;s info auto-populates; verify it&#39;s correct
+- Buyer&#x27;s Agent: User&#x27;s info auto-populates; verify it&#x27;s correct
 
 **Escrow / Title / Attorney:**
 - Florida uses title companies. Select **Title**.
@@ -3105,7 +3097,7 @@ Listing Agent: [Name] | [Brokerage]
 Email: [email]
 Phone: [phone]
 
-Buyer&#39;s Agent: [Name] | [Brokerage]
+Buyer&#x27;s Agent: [Name] | [Brokerage]
 Email: [email]
 Phone: [phone]
 
@@ -3142,7 +3134,7 @@ Phone: [phone]
 8. Omit Misc Contact section if none
 
 ### Recipients:
-- Other agent&#39;s email
+- Other agent&#x27;s email
 - Title company email
 - Lender email (skip if cash)
 - Referral agent email (if applicable)
@@ -3161,7 +3153,7 @@ Create the draft in [YOUR_EMAIL] Gmail using the subject, body, and recipients f
 
 ## Step 8: Add Key Dates to Google Calendar
 
-Add all-day events to the user&#39;s **Administration** calendar:
+Add all-day events to the user&#x27;s **Administration** calendar:
 - **Calendar ID:** `[YOUR_CALENDAR_ID]`
 - Use `sendUpdates: &quot;none&quot;` and all-day `date` format (not `dateTime`)
 
@@ -3193,7 +3185,7 @@ Stop and ask when:
 - A commission field or split is unclear
 - A contingency deadline cannot be calculated from the documents
 - The transaction platform returns multiple possible matches
-- A document type doesn&#39;t map clearly to a checklist slot
+- A document type doesn&#x27;t map clearly to a checklist slot
 - Any detail is missing, conflicting, or ambiguous
 - A recovery attempt fails — do not try multiple fixes without checking in first
 
@@ -3242,7 +3234,7 @@ Read BOTH files:
 Apply everything. These are fixes from prior runs that must not be repeated.
 
 Also check for any `[PROMOTE]` entries in the skill log. These are corrections from prior
-sessions that should have been embedded in this skill but weren&#39;t (usually due to low context).
+sessions that should have been embedded in this skill but weren&#x27;t (usually due to low context).
 If you find any, embed them into the relevant step of this skill before proceeding with the run.
 
 ### Writing (End of Run)
@@ -3265,7 +3257,9 @@ observation). Format:
 Categories: CORRECTION, PREFERENCE, INSIGHT, WORKFLOW, DECISION, CONTEXT, ERROR
 
 Only write to UNIVERSAL_LOG.txt if the correction applies to ALL skills (rare).
-All logs are append-only. Never overwrite.
+All logs are append-only. Never overwrite.</pre>
+    </div>
+  </div>
 
   <div style="margin-top: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 2rem;" class="reveal">
     <h3 style="font-size: 1.05rem; margin-bottom: 0.8rem;">A Note on Expectations</h3>
