@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Calendar-with-check icon, derived from the Closing Day mark.
+       Brand purple background, teal check. Designed at 64x64 so it
+       reads cleanly in browser tabs (16/32px) and PWA installs. -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2b2a72"/>
+      <stop offset="100%" stop-color="#3b3a9e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="url(#bg)"/>
+
+  <!-- Calendar binder rings -->
+  <rect x="18" y="8"  width="4" height="8" rx="1.5" fill="#ffffff" opacity="0.95"/>
+  <rect x="42" y="8"  width="4" height="8" rx="1.5" fill="#ffffff" opacity="0.95"/>
+
+  <!-- Calendar body -->
+  <rect x="11" y="14" width="42" height="40" rx="5" fill="#ffffff"/>
+
+  <!-- Calendar header strip -->
+  <rect x="11" y="14" width="42" height="9" rx="5" fill="#1a1956"/>
+  <rect x="11" y="18" width="42" height="5" fill="#1a1956"/>
+
+  <!-- Checkmark in teal -->
+  <path
+    d="M19 38 L28 47 L46 29"
+    fill="none"
+    stroke="#00b4a6"
+    stroke-width="6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
