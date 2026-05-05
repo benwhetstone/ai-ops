@@ -1,0 +1,15 @@
+# Files in this list are not served as static assets by the Worker.
+# The Worker code, configs, README and starter-template markdowns stay private.
+src/
+wrangler.jsonc
+wrangler.toml
+package.json
+package-lock.json
+node_modules/
+README.md
+listing-starter.md
+social-starter.md
+transaction-starter.md
+.assetsignore
+.gitignore
+.git/

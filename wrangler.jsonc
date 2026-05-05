@@ -1,0 +1,33 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ai-ops-site",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-05-05",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/blog",
+      "/blog/*",
+      "/admin",
+      "/admin/*",
+      "/api/*",
+      "/sitemap.xml",
+      "/robots.txt",
+      "/feed.xml"
+    ]
+  },
+  "vars": {
+    "SITE_URL": "https://aiopsforrealestate.com",
+    "SITE_NAME": "AI Ops for Real Estate",
+    "SITE_AUTHOR": "Ben Whetstone",
+    "SITE_AUTHOR_HANDLE": "ben-whetstone"
+  }
+}
