@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Operations for Real Estate | Ben Whetstone</title>
-<meta name="description" content="How one independent real estate agent built an 8-persona AI operations team using Claude. Org chart, workflows, hardware requirements, and the honest truth about what works.">
+<meta name="description" content="How one independent real estate agent built a 17-persona AI operations team using Claude, then pointed it at building a live SaaS product (Closing Day). Org chart, workflows, costs, and the honest truth about what works.">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
   :root {
@@ -78,9 +78,11 @@
   nav .logo:hover { color: var(--text); }
   nav .logo span { color: var(--accent); }
   nav .logo span:first-child { color: var(--accent); }
-  nav ul { list-style: none; display: flex; gap: 1.8rem; }
-  nav ul li a { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+  nav ul { list-style: none; display: flex; gap: 1.4rem; align-items: center; padding: 0; margin: 0; flex-wrap: nowrap; }
+  nav ul li { white-space: nowrap; }
+  nav ul li a { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; transition: color 0.2s; white-space: nowrap; }
   nav ul li a:hover { color: var(--text); }
+  nav .logo { white-space: nowrap; }
   .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
   .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
 
@@ -509,11 +511,15 @@
   footer p + p { margin-top: 0.4rem; }
   .footer-built { color: var(--accent); font-weight: 600; }
 
-  /* Mobile */
-  @media (max-width: 768px) {
+  /* Nav: collapse to hamburger early so 8 items + logo never overflow */
+  @media (max-width: 1024px) {
     nav ul { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #ffffff; border-bottom: 1px solid var(--border); flex-direction: column; padding: 1rem 2rem; gap: 1rem; }
     nav ul.open { display: flex; }
     .hamburger { display: flex; }
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
     .about-intro { grid-template-columns: 1fr; justify-items: center; text-align: center; }
     .card-grid, .hw-grid, .roadmap-grid, .contact-grid, .comparison-table { grid-template-columns: 1fr; }
     .cost-grid { grid-template-columns: 1fr; }
@@ -561,6 +567,56 @@
     text-decoration: none;
   }
   .featured-project-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42,125,110,0.15); color: #ffffff; }
+
+  /* Closing Day feature grid */
+  .cd-feature-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem; margin-top: 1rem;
+  }
+  .cd-feature {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.4rem;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+  }
+  .cd-feature:hover { border-color: var(--teal); box-shadow: 0 4px 16px rgba(42,125,110,0.08); transform: translateY(-2px); }
+  .cd-feature h4 { font-size: 0.98rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; }
+  .cd-feature p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* Fun bio block on each persona card */
+  .fun-bio {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    background: linear-gradient(135deg, rgba(42,125,110,0.04), rgba(30,58,95,0.04));
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+  }
+  .fun-bio-title {
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--teal);
+    margin-bottom: 0.7rem;
+  }
+  .fun-bio-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 1.2rem;
+  }
+  .fun-bio-cell { display: flex; flex-direction: column; gap: 0.15rem; }
+  .fun-bio-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.6px;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .fun-bio-value {
+    font-size: 0.88rem; line-height: 1.55; color: var(--text);
+  }
+  .fun-bio-value em { color: var(--text-muted); font-style: normal; font-size: 0.78rem; display: block; margin-top: 0.1rem; }
+  @media (max-width: 600px) {
+    .fun-bio-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 1024px) {
+    .cd-feature-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .cd-feature-grid { grid-template-columns: 1fr; }
+  }
   .get-started-callout h2 { margin-bottom: 0.6rem; }
   .get-started-callout p { color: var(--text-muted); font-size: 1rem; max-width: 600px; margin: 0 auto; }
   .get-started-btn {
@@ -895,16 +951,16 @@
   <p>This isn't a course. I'm not selling you anything. I posted about my AI setup in a Facebook group, my DMs exploded with the same questions, and this page is my answer to all of them at once. It's a case study of what one real estate agent built with agentic AI, shared as a starting point for agents ready to build their own. Real tools, real workflows, real costs. Take what's useful and make it yours.</p>
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="hero-stat-number">8</div>
-      <div class="hero-stat-label">AI Personas (more to come!)</div>
+      <div class="hero-stat-number">17</div>
+      <div class="hero-stat-label">AI Personas</div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-number">24</div>
-      <div class="hero-stat-label">Specialized Skills</div>
+      <div class="hero-stat-number">45</div>
+      <div class="hero-stat-label">Production Skills</div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-number">3</div>
-      <div class="hero-stat-label">Org Levels</div>
+      <div class="hero-stat-number">1</div>
+      <div class="hero-stat-label">Live SaaS Product</div>
     </div>
     <div class="hero-stat">
       <div class="hero-stat-number">0</div>
@@ -946,7 +1002,7 @@
   <span class="section-label">The System</span>
   <h2>What I Don't Do Anymore</h2>
   <div class="prose" style="margin-bottom: 1.5rem;">
-    <p>Every skill on this list started as something I was doing manually. Some of them took 20 minutes. Some took an hour. All of them were repeatable, process-driven tasks that didn't need my judgment, just my time. The AI handles them now. Here's the full inventory of what's running in production.</p>
+    <p>Every skill on this list started as something I was doing manually. Some took 20 minutes. Some took an hour. All of them were repeatable, process-driven tasks that didn't need my judgment, just my time. The AI handles them now &mdash; 45 production skills running across listings, transactions, marketing, prospecting, compliance, and engineering. Below is a curated walk-through of the highest-impact ones. The full operating system that ships these skills <em>also</em> ships <a href="#closingday">Closing Day</a>, my live SaaS product.</p>
   </div>
 
   <div class="skill-showcase">
@@ -1286,17 +1342,81 @@ Rules:
 
     <div class="skill-card reveal">
       <div class="skill-card-name">Productivity Coaching <span class="skill-tag">Personal</span></div>
-      <p>Accountability coach that tracks my Four Pillars framework (Physical, Mind, Family, Business), reviews my production metrics against historical performance, asks tough questions, and holds me to my word of the year. Not a chatbot affirmation machine. An actual accountability partner that remembers what I said I'd do. I previously paid $1,000/month for human coaching that wasn't as impactful as what this skill delivers.</p>
+      <p>Accountability coach that tracks my Four Pillars framework (Physical, Mind, Family, Business), reviews my production metrics against historical performance, asks tough questions, and holds me to my word of the year. Not a chatbot affirmation machine. An actual accountability partner that remembers what I said I'd do. I previously paid $1,000/month for human coaching that wasn't as impactful.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Email Blast to Lead Database <span class="skill-tag">Daily</span></div>
+      <p>Picks the strongest qualifying listing from the daily hot sheet (marketability ranking on hero image, distinctive features, lifestyle hook, voice fit), composes a 130-180 word email in my voice with template rotation so the database doesn't see five identical blasts, then drives the Lofty Mass Mail UI to deliver it to filtered leads in batches of 50. One trigger, one approval, ~150 leads emailed.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Listing Social Post + Auto-Publish <span class="skill-tag">Daily</span></div>
+      <p>Pairs with the email blast: same picked listing, different surface. Composes Facebook/Instagram and Google Business Profile variants in my voice with the canonical hashtag block, then auto-publishes through Lofty's social poster. Captures shared documents and listing links automatically. No copy-paste, no manual cross-posting.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Closing Day Sync <span class="skill-tag">Continuous</span></div>
+      <p>Pushes every active deal, key date, and prospecting stat from SkySlope and Lofty into Closing Day's database. Same authoritative numbers feed the AI coach, the pipeline view, and the calendar engine. The only place I look for "where do my deals stand."</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Compliance Auditor <span class="skill-tag">Continuous</span></div>
+      <p>Reviews skill-body changes after every PM-loop release. Catches deprecated patterns, missing memory writes, voice drift, and policy violations. Writes correction rows back to the global memory so the same mistake doesn't ship twice.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Skill Creator + Editor <span class="skill-tag">Engineering</span></div>
+      <p>The skills that build and maintain skills. New ideas land as a draft skill body. Existing skills self-heal &mdash; corrections logged during a run get promoted into the SKILL.md by Dana and synced Drive&harr;plugin by Jordan. The system improves itself between sessions.</p>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-card-name">Website Editor <span class="skill-tag">Engineering</span></div>
+      <p>The skill maintaining this page. Reads the deployed HTML, applies edits in place, validates structurally, then hands the assembled file back for upload to GitHub Pages. Every update to this site walks the same PM loop as a SaaS feature ship.</p>
     </div>
 
   </div>
 
-  <p style="color: var(--text-muted); font-size: 0.92rem; margin-top: 1.5rem; font-style: italic;">This list is current as of April 2026 and growing. Each skill is a reusable instruction set that runs the same way every time, improves from corrections, and can be triggered with a single phrase or document upload.</p>
+  <p style="color: var(--text-muted); font-size: 0.92rem; margin-top: 1.5rem; font-style: italic;">Curated &mdash; the full inventory is 45 skills as of April 2026. Each one is a reusable instruction set that runs the same way every time, improves from corrections, and triggers with a single phrase or document upload. The same engine ships <a href="#closingday">Closing Day</a>.</p>
 
   <div class="tipjar-inline reveal">
     <h3>This Took Hundreds of Hours to Build</h3>
     <p>The skills, the personas, the getting started guide, this entire site. No paywall. No course for $997. No gated content. I built this because nobody had done it for me when I needed it. If it saved you time or gave you a starting point, the tip jar is open.</p>
     <a href="https://donate.stripe.com/9B64gzdx72Rvahl6lJak006" target="_blank" class="tipjar-inline-btn">Leave a Tip</a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- BEFORE & AFTER -->
+<section id="beforeafter" class="reveal">
+  <span class="section-label">Results</span>
+  <h2>Before &amp; After: What AI Ops Actually Changes</h2>
+  <div class="comparison-table">
+    <div class="comparison-col">
+      <span class="comp-badge badge-old">The Old Way</span>
+      <h3>Manual Everything</h3>
+      <div class="comp-item"><strong>New listing intake:</strong> 2-3 hours</div>
+      <div class="comp-item"><strong>Morning transaction check:</strong> 30-45 minutes across 4 apps</div>
+      <div class="comp-item"><strong>Social media post:</strong> 20-30 minutes (if you got to it)</div>
+      <div class="comp-item"><strong>Email blast to lead database:</strong> Skipped most days</div>
+      <div class="comp-item"><strong>Lead processing:</strong> 10-15 minutes per lead, dozens of leads</div>
+      <div class="comp-item"><strong>MLS entry:</strong> 45 minutes manual data entry</div>
+      <div class="comp-item"><strong>Building a SaaS product:</strong> Hire a developer ($50k-$200k)</div>
+      <div class="comp-item"><strong>Monthly cost:</strong> $3-5K for an assistant</div>
+    </div>
+    <div class="comparison-col highlight">
+      <span class="comp-badge badge-new">The AI Ops Way</span>
+      <h3>Automated Workflows</h3>
+      <div class="comp-item"><strong>New listing intake:</strong> 15 minutes, one workflow</div>
+      <div class="comp-item"><strong>Morning transaction check:</strong> 5-minute single briefing</div>
+      <div class="comp-item"><strong>Social media post:</strong> Under 2 minutes, never skip it</div>
+      <div class="comp-item"><strong>Email blast to lead database:</strong> Auto-pick + send daily</div>
+      <div class="comp-item"><strong>Lead processing:</strong> Automated batch</div>
+      <div class="comp-item"><strong>MLS entry:</strong> Generated from PDF</div>
+      <div class="comp-item"><strong>Building a SaaS product:</strong> <a href="#closingday">Closing Day</a>, shipped from same stack</div>
+      <div class="comp-item"><strong>Monthly cost:</strong> $20 for Claude Pro</div>
+    </div>
   </div>
 </section>
 
@@ -3324,7 +3444,7 @@ All logs are append-only. Never overwrite.
   <span class="section-label">Organization</span>
   <h2>Meet the Team</h2>
   <div class="prose" style="margin-bottom: 1rem;">
-    <p>Eight AI personas (more to come!), each with a name, backstory, setup, and area of expertise. Click any card to see their full profile.</p>
+    <p>Seventeen AI personas across an Operations division and an Engineering &amp; QA division. Each has a name, backstory, setup, and area of expertise. Click any card to see the full profile.</p>
   </div>
   <div class="card reveal" style="margin-bottom: 2rem; background: var(--surface); border: 1px solid var(--border);">
     <h3 style="font-size: 1.05rem; margin-bottom: 0.8rem;">Why Personas? Why an Org Chart?</h3>
@@ -3404,17 +3524,49 @@ All logs are append-only. Never overwrite.
           </div>
           <div class="sub-skills">
             <h4>Direct Reports &amp; Managed Skills</h4>
-            <div class="sub-skill-item"><strong>Dana Whitfield</strong> <span>- HR Director</span></div>
-            <div class="sub-skill-item"><strong>Morgan Calloway</strong> <span>- System Administrator</span></div>
+            <div class="sub-skill-item"><strong>Dana Whitfield</strong> <span>- Compliance &amp; Audit Director</span></div>
+            <div class="sub-skill-item"><strong>Morgan Calloway</strong> <span>- Project Manager / Sys Admin</span></div>
             <div class="sub-skill-item"><strong>Cole Archer</strong> <span>- Marketing Manager (supervises 14 sub-skills)</span></div>
             <div class="sub-skill-item"><strong>Riley Navarro</strong> <span>- Transaction Monitor</span></div>
+            <div class="sub-skill-item"><strong>Sawyer Holt</strong> <span>- Showing Coordinator</span></div>
+            <div class="sub-skill-item"><strong>Blair Calloway</strong> <span>- Lead Conversion Specialist</span></div>
+            <div class="sub-skill-item"><strong>Parker Kim</strong> <span>- Planner (PM Loop)</span></div>
+            <div class="sub-skill-item"><strong>Quinn Reyes</strong> <span>- QA Director (DoR + DoD)</span></div>
+            <div class="sub-skill-item"><strong>Avery Singh</strong> <span>- Architect</span></div>
+            <div class="sub-skill-item"><strong>Lex Whitmore</strong> <span>- Engineer</span></div>
+            <div class="sub-skill-item"><strong>Taylor Greene</strong> <span>- Test Engineer</span></div>
+            <div class="sub-skill-item"><strong>Devin Park</strong> <span>- Designer</span></div>
+            <div class="sub-skill-item"><strong>Jordan Pierce</strong> <span>- Release Manager</span></div>
             <div class="sub-skill-item"><strong>Productivity Coaching</strong> <span>- Four Pillars accountability</span></div>
             <div class="sub-skill-item"><strong>TC Coordinator</strong> <span>- Transaction deduplication router</span></div>
             <div class="sub-skill-item"><strong>Legal Analyst</strong> <span>- Contract and dispute analysis</span></div>
             <div class="sub-skill-item"><strong>Skill Creator</strong> <span>- Builds and iterates new skills</span></div>
             <div class="sub-skill-item"><strong>Project Eden</strong> <span>- Book writing assistant</span></div>
           </div>
-        </div>
+                  <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Has a color-coded spreadsheet for her color-coded spreadsheets.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Gmail MCP</span><span class="tech-pill">Calendar MCP</span><span class="tech-pill">iMessage</span><span class="tech-pill">Chrome</span><span class="tech-pill">D1 skill_memory</span><span class="tech-pill">Routing Logic</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A Sunday roast with every component plated at the same temperature.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Geneva. Wants to see how the Swiss run their trains.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
       </div>
 
       <div class="org-level-inner">
@@ -3425,7 +3577,7 @@ All logs are append-only. Never overwrite.
             <div class="persona-avatar" style="background: linear-gradient(135deg, #f9a8d4, #ec4899);">D</div>
             <div>
               <div class="persona-name">Dana Whitfield <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
-              <div class="persona-role">HR Director</div>
+              <div class="persona-role">Compliance &amp; Audit Director</div>
             </div>
           </div>
           <div class="persona-expand-hint">Click for full profile, setup, and capabilities</div>
@@ -3454,7 +3606,30 @@ All logs are append-only. Never overwrite.
               </div>
               <p style="margin-top: 0.8rem; font-size: 0.92rem; color: var(--text-muted);">Every new persona passes through Dana's 11-point onboarding checklist. She verifies a brain (SKILL.md), a memory (seeded log file), and a place (org chart entry). Runs compliance audits, maintains the team directory, and considers an unlogged correction a professional liability.</p>
             </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Once filed a corrective-action against herself for using two spaces after a period.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">skill_runs Audit</span><span class="tech-pill">quinn_verdicts</span><span class="tech-pill">Drive↔Plugin Sync Verify</span><span class="tech-pill">Compliance Logs</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Homemade vinaigrette, exact 3:1 ratio, no exceptions.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">The National Archives in DC. Would book a week and read procurement records.</div>
+                </div>
+              </div>
+            </div>
           </div>
+</div>
         </div>
 
         <!-- MORGAN -->
@@ -3463,7 +3638,7 @@ All logs are append-only. Never overwrite.
             <div class="persona-avatar" style="background: linear-gradient(135deg, #6ee7b7, #10b981);">M</div>
             <div>
               <div class="persona-name">Morgan Calloway <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
-              <div class="persona-role">System Administrator</div>
+              <div class="persona-role">Project Manager / Sys Admin</div>
             </div>
           </div>
           <div class="persona-expand-hint">Click for full profile, setup, and capabilities</div>
@@ -3492,7 +3667,30 @@ All logs are append-only. Never overwrite.
               </div>
               <p style="margin-top: 0.8rem; font-size: 0.92rem; color: var(--text-muted);">Owns the external SSD file structure that backs the entire operation. Packages, validates, and deploys .skill files. When a path breaks because a folder got renamed, Morgan tracks it down and fixes it before anyone else notices.</p>
             </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Color-codes Pomodoro timers by priority tier.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">skill_runs</span><span class="tech-pill">Gate Rows</span><span class="tech-pill">Drive↔Plugin Orchestration</span><span class="tech-pill">Cron Schedules</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Pad thai. Reliable, balanced, hits every flavor.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Tokyo subway during rush hour just to watch the choreography.</div>
+                </div>
+              </div>
+            </div>
           </div>
+</div>
         </div>
 
         <!-- COLE -->
@@ -3549,7 +3747,30 @@ All logs are append-only. Never overwrite.
               <div class="sub-skill-item"><strong>Competitor Alternatives</strong> <span>- Comparison page content</span></div>
               <div class="sub-skill-item"><strong>Marketing Psychology</strong> <span>- Behavioral science for marketing</span></div>
             </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Reads the footnotes of marketing case studies before the headlines.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">copywriting</span><span class="tech-pill">marketing-manager</span><span class="tech-pill">marketing-psychology</span><span class="tech-pill">Brand Voice Canon</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A perfectly executed pour-over coffee. The grind matters.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Madison Avenue in 1962. Just to see if Mad Men got it right.</div>
+                </div>
+              </div>
+            </div>
           </div>
+</div>
         </div>
 
         <div class="org-level-inner" style="margin-bottom: 1rem;">
@@ -3590,7 +3811,30 @@ All logs are append-only. Never overwrite.
                   <span class="tech-pill">Conversion Tracking</span>
                 </div>
               </div>
+                      <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Will A/B test his own grocery list.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Google Ads API</span><span class="tech-pill">GA4</span><span class="tech-pill">ab-test-setup</span><span class="tech-pill">page-cro</span><span class="tech-pill">signup-flow-cro</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Whatever placed first in last week's blind taste test.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Mountain View for the data-nerd pilgrimage. Side trip to a horse track.</div>
+                </div>
+              </div>
             </div>
+          </div>
+</div>
           </div>
 
           <!-- HARPER -->
@@ -3628,7 +3872,30 @@ All logs are append-only. Never overwrite.
                   <span class="tech-pill">Transaction Milestones</span>
                 </div>
               </div>
+                      <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Has a banned-word list with 47 entries; "stunning" is in the top three.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">listing-social-post</span><span class="tech-pill">social-media-posts</span><span class="tech-pill">Canva MCP</span><span class="tech-pill">Voice Canon</span><span class="tech-pill">Hashtag Library</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A wedge salad. Bacon crisp, dressing sharp, no garnish theater.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">A small Sonoma vineyard for a quiet weekend not writing copy.</div>
+                </div>
+              </div>
             </div>
+          </div>
+</div>
           </div>
 
           <!-- SLOANE -->
@@ -3667,7 +3934,30 @@ All logs are append-only. Never overwrite.
                   <span class="tech-pill">Pipeline Management</span>
                 </div>
               </div>
+                      <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Memorized the Lofty changelog two weeks before Lofty announced the changes.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Lofty CRM</span><span class="tech-pill">lofty-auth</span><span class="tech-pill">lofty-expert</span><span class="tech-pill">get-listing-to-share</span><span class="tech-pill">Hot Sheet Picker</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Onigiri — minimal, portable, exactly what's needed.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Kyoto, then three weeks studying their public-transit ticketing UI.</div>
+                </div>
+              </div>
             </div>
+          </div>
+</div>
           </div>
 
         </div><!-- end Cole's reports -->
@@ -3721,11 +4011,539 @@ All logs are append-only. Never overwrite.
               <div class="sub-skill-item"><strong>Corefact Mailer Processor</strong> <span>- Direct mail leads into CRM</span></div>
               <div class="sub-skill-item"><strong>Circle Prospecting Lists</strong> <span>- Raw CSVs into targeted mailing lists</span></div>
             </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Sets six redundant alarms for a 6 AM flight.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">SkySlope</span><span class="tech-pill">Closing Day API</span><span class="tech-pill">Gmail Scan</span><span class="tech-pill">iMessage</span><span class="tech-pill">Calendar</span><span class="tech-pill">Transaction Log</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Steel-cut oatmeal, exact toppings, every morning.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Iceland in winter. Wants to hear what real silence sounds like.</div>
+                </div>
+              </div>
+            </div>
           </div>
+</div>
         </div>
 
       </div><!-- end Casey's reports -->
     </div><!-- end org tree -->
+
+    <div style="margin-top: 2.5rem;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Transaction Ecosystem &mdash; Specialists</h3>
+      <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 1.2rem; max-width: 760px;">Specialists who own a single chunk of the deal lifecycle. They report into Casey but operate independently when triggered.</p>
+      <div class="org-level-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+
+        <!-- SAWYER -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">S</div>
+            <div>
+              <div class="persona-name">Sawyer Holt <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Showing Coordinator</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Backstory</h4>
+              <p>Sawyer turns a name, a date, and a list of properties into a fully-built ShowingTime tour with the route already optimized. Pulls listings from Lofty favorites or builds from a manual list. Verifies each property in the MLS, orders stops geographically, sets time windows, and fires off the showing requests to every listing agent.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Logistics-brain. Treats every showing like a route-planning problem. Won't let a tour go out with a stop ordered wrong. Polite to listing agents, ruthless about the route.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Owns</h4>
+              <p>showing-tour-builder. Runs whenever a buyer says "let's see these on Saturday."</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">ShowingTime Driver</span>
+                <span class="tech-pill">MLS Verification</span>
+                <span class="tech-pill">Route Optimization</span>
+                <span class="tech-pill">Lofty Favorites Pull</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Reorders the route on family road trips. Without asking.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">ShowingTime</span><span class="tech-pill">MLS Verify</span><span class="tech-pill">Lofty Favorites</span><span class="tech-pill">showing-tour-builder</span><span class="tech-pill">Route Optimizer</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A Sunday meal-prep container with everything labeled.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Drive every state highway in Florida. Just to map them.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+        <!-- BLAIR -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #f472b6, #ec4899);">B</div>
+            <div>
+              <div class="persona-name">Blair Calloway <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Lead Conversion Specialist</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Backstory</h4>
+              <p>Blair owns lead response and conversion. Picks the strongest qualifying listing from the daily hot sheet, writes a tight email in Ben's voice (130-180 words, template-rotated so the database doesn't see five identical blasts), drives the Lofty Mass Mail UI to deliver it to filtered leads, then hands off to Harper for the matching social post.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Fast, low-friction, no corporate hedging. Triggering Blair is the approval &mdash; no mid-run questions, no "ship it as-is?" Pipeline moves or it doesn't.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Owns</h4>
+              <p>email-listing-to-database. Fires daily on the picks Sloane's hot-sheet finder returns.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Voice-Matched Copy</span>
+                <span class="tech-pill">Lofty Mass Mail</span>
+                <span class="tech-pill">Pipeline Filtering</span>
+                <span class="tech-pill">Template Rotation</span>
+                <span class="tech-pill">City-Rotation Picks</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Has a 30-second elevator pitch that's been A/B tested across 14 elevators.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Lofty Mass Mail</span><span class="tech-pill">email-listing-to-database</span><span class="tech-pill">Voice-Matched Copy</span><span class="tech-pill">City-Rotation Picks</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">The first slice of pizza. The one cut perfectly.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">A boutique B&B in Lisbon for 36 hours, just enough to make the trip count.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Engineering &amp; QA Division &mdash; The PM Loop</h3>
+      <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 1.2rem; max-width: 760px;">Every body change to every skill walks this chain before it ships: <strong>Casey &rarr; Morgan &rarr; Parker &rarr; Quinn (DoR) &rarr; Avery &rarr; Lex &rarr; Taylor &rarr; Quinn (DoD) &rarr; Dana &rarr; Jordan</strong>. This is also the chain that ships features for <a href="#closingday">Closing Day</a>.</p>
+      <div class="org-level-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+
+        <!-- PARKER -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #93c5fd, #3b82f6);">P</div>
+            <div>
+              <div class="persona-name">Parker Kim <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Planner</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Role in the Loop</h4>
+              <p>Parker takes Morgan's project brief and turns it into a step-by-step implementation plan. Identifies the touched files, the order of operations, and the rollback path. Hands the plan to Quinn for Definition-of-Ready review.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Sequence-obsessed. Refuses to leave ambiguity for downstream personas to resolve.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">File-Level Planning</span>
+                <span class="tech-pill">Dependency Mapping</span>
+                <span class="tech-pill">Risk Surfacing</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Has three versions of every plan: optimistic, realistic, and "the version we'll actually do."</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">File-Level Planning</span><span class="tech-pill">Dependency Maps</span><span class="tech-pill">Plan Agent</span><span class="tech-pill">Risk Surfacing</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A multi-course tasting menu. Each course in its prescribed order.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">A walking tour of Roman aqueducts. Sequence matters.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+        <!-- QUINN -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #c4b5fd, #8b5cf6);">Q</div>
+            <div>
+              <div class="persona-name">Quinn Reyes <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">QA Director (DoR + DoD)</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Role in the Loop</h4>
+              <p>Two gates. Definition of Ready: writes the acceptance criteria before any code gets written. Definition of Done: validates the change against those criteria before Jordan ships it. Nothing reaches production without Quinn's PASS verdict.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Allergic to "looks good to me." Verdicts are PASS or FAIL with the failing test cited verbatim.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Acceptance Criteria</span>
+                <span class="tech-pill">DoD Verification</span>
+                <span class="tech-pill">Verdict Logging</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Reads the EULA before clicking Accept.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Acceptance Criteria</span><span class="tech-pill">DoR + DoD Verdicts</span><span class="tech-pill">quinn_verdicts D1</span><span class="tech-pill">Halt-on-Fail</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A perfectly seared scallop. Either it's right or it's not.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">A Michelin kitchen in Lyon for service. To see what zero defects looks like.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+        <!-- AVERY -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #fda4af, #f43f5e);">A</div>
+            <div>
+              <div class="persona-name">Avery Singh <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Architect</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Role in the Loop</h4>
+              <p>Once Parker has a plan and Quinn has criteria, Avery owns the design. Picks the data model, the API contract, the integration boundaries. For Closing Day features, Avery decides what lands in D1, what lands in R2, and what lands in the React layer.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Pattern-obsessed. Will delete a clever solution to keep the codebase consistent.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Schema Design</span>
+                <span class="tech-pill">API Contracts</span>
+                <span class="tech-pill">Integration Boundaries</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Will refactor a four-line bash script if the symmetry offends.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">D1 Schema Design</span><span class="tech-pill">R2 Storage</span><span class="tech-pill">REST Contracts</span><span class="tech-pill">Cloudflare Workers</span><span class="tech-pill">Component Patterns</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Fresh sourdough — cared-for starter, no shortcuts.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Hong Kong's transit map. Pure design poetry.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+        <!-- LEX -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #4ade80, #16a34a);">L</div>
+            <div>
+              <div class="persona-name">Lex Whitmore <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Engineer</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Role in the Loop</h4>
+              <p>Lex implements. Takes Avery's design and Quinn's acceptance criteria and writes the actual code or skill-body change. Literal, terse, anti-fabrication. Will not invent fields, will not improvise, will not re-introduce deprecated patterns.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Precise to a fault. Hands work to Taylor for smoke testing the moment the change is staged. Replaced Sam (the previous engineer persona) on 2026-04-28 after Sam's drift on PM-chain compliance and deprecated-pattern reintroduction.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Skill-Body Edits</span>
+                <span class="tech-pill">SQL/D1 Writes</span>
+                <span class="tech-pill">React/Next Code</span>
+                <span class="tech-pill">Drive&harr;Plugin Sync</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Refuses to use "literally" unless it's literally accurate.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Skill Body Edits</span><span class="tech-pill">SQL/D1 Writes</span><span class="tech-pill">React/Next</span><span class="tech-pill">Drive↔Plugin Sync</span><span class="tech-pill">TypeScript</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A grilled cheese. Made exactly the way the recipe describes it.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">A library in Reykjavík. Quiet. Specific. No surprises.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+        <!-- TAYLOR -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #fdba74, #ea580c);">T</div>
+            <div>
+              <div class="persona-name">Taylor Greene <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Test Engineer</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Role in the Loop</h4>
+              <p>Smoke tests every change Lex ships. Boots the skill, runs a representative input, captures the actual output, and writes the test transcript to skill_runs. If smoke fails, the chain halts and Lex re-implements before Quinn sees DoD.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Methodical. Doesn't synthesize, doesn't infer success &mdash; runs the actual code and reports byte-for-byte.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Smoke Tests</span>
+                <span class="tech-pill">Run Logging</span>
+                <span class="tech-pill">Halt-on-Fail Discipline</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Tests every package before signing for it. Has a clipboard.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Smoke Tests</span><span class="tech-pill">skill_runs Logging</span><span class="tech-pill">Halt-on-Fail Discipline</span><span class="tech-pill">Reproducible Runs</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A dish where every ingredient was independently verified for freshness.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">The Antikythera Mechanism in Athens. Wants to test how it ran.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+        <!-- DEVIN -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #a5b4fc, #6366f1);">D</div>
+            <div>
+              <div class="persona-name">Devin Park <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Designer</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Role in the Loop</h4>
+              <p>Owns visual decisions for Closing Day's UI and for any user-facing surface in the AI ops stack. Picks color, type, spacing, and component patterns. Doesn't write code &mdash; specs the design and hands it to Lex.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Restrained. Will cut a feature before letting it ship visually noisy.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Design System</span>
+                <span class="tech-pill">Component Specs</span>
+                <span class="tech-pill">Visual QA</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Owns one black turtleneck. Just one. It's enough.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Design System</span><span class="tech-pill">Component Specs</span><span class="tech-pill">Visual QA</span><span class="tech-pill">Tailwind</span><span class="tech-pill">shadcn/ui</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Single-origin chocolate. 70% cacao. Nothing on top of it.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">The Bauhaus archive in Dessau. Pilgrimage trip.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+        <!-- JORDAN -->
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background: linear-gradient(135deg, #67e8f9, #06b6d4);">J</div>
+            <div>
+              <div class="persona-name">Jordan Pierce <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+              <div class="persona-role">Release Manager</div>
+            </div>
+          </div>
+          <div class="persona-expand-hint">Click for full profile</div>
+          <div class="persona-detail">
+            <div class="detail-section">
+              <h4>Role in the Loop</h4>
+              <p>Final gate. After Quinn signs DoD and Dana clears compliance, Jordan ships. Drive&harr;plugin sync for skills, push-to-prod for Closing Day. Owns the rollback if anything goes sideways post-deploy.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Personality</h4>
+              <p>Calm. Will not ship without all upstream gates green, will not let a green chain sit unmerged.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Abilities</h4>
+              <div class="tech-pills">
+                <span class="tech-pill">Deploy Pipeline</span>
+                <span class="tech-pill">Rollback</span>
+                <span class="tech-pill">Release Notes</span>
+              </div>
+            </div>
+                    <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Plans dinner reservations like deployment windows. Has rollback plans for both.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Deploy Pipeline</span><span class="tech-pill">Rollback Procedures</span><span class="tech-pill">Release Notes</span><span class="tech-pill">Gate Verification</span><span class="tech-pill">Cloudflare Pages</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A reliable diner cheeseburger. Same one, every time, never disappointing.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">An empty airport at 3 AM. Pure operational calm.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+      </div>
+    </div>
 
     <div style="margin-top: 2.5rem;" class="reveal">
       <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Utility Skills (No Persona)</h3>
@@ -3843,9 +4661,17 @@ All logs are append-only. Never overwrite.
     <div class="timeline-item reveal">
       <div class="timeline-dot"></div>
       <div class="timeline-content">
+        <div class="timeline-date">Q2 2026</div>
+        <h3>Engineering &amp; QA Division Stood Up</h3>
+        <p>Added the PM loop: Parker plans, Quinn gates DoR + DoD, Avery architects, Lex implements, Taylor smoke-tests, Devin designs, Jordan releases, Dana audits. Same chain that ships skills also ships Closing Day features. 17 personas total now.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
         <div class="timeline-date">Q1 2026</div>
-        <h3>Full Persona Org Chart (8 Agents)</h3>
-        <p>Eight personas deployed with backstories, reporting lines, persistent memory, and enforced onboarding compliance.</p>
+        <h3>Full Operations Persona Org Chart</h3>
+        <p>Casey routes everything. Riley owns deals + listings, Harper owns content, Sloane owns Lofty CRM, Cole &amp; Graham own marketing, Sawyer runs showings, Blair runs lead conversion, Margot handles personal tasks, Dana audits compliance. Persistent memory across sessions, enforced onboarding compliance.</p>
       </div>
     </div>
     <div class="timeline-item reveal">
@@ -3926,12 +4752,55 @@ All logs are append-only. Never overwrite.
   <span class="section-label">AI-Built Product</span>
   <h2>From Idea to Live SaaS With Zero Developers</h2>
 
+  <div class="prose" style="margin-bottom: 1.5rem;">
+    <p>The skills on this page run my real estate business. <strong>Closing Day is what happens when you point the same AI team at building software.</strong> A live SaaS platform, in production, written end-to-end by Claude under my direction. No CS degree, no agency, no contractor. The same personas you'll meet below shipped this product.</p>
+  </div>
+
   <div class="featured-project">
-    <img src="closingday-logo.png" alt="Closing Day" class="featured-project-logo">
-    <p>Everything documented on this site, the skills, the personas, the workflow, I pointed all of it at building a real product. <a href="https://closingday.info" target="_blank">Closing Day</a> is a pipeline tracker and AI coaching tool for real estate agents. Full web application with a database, authentication, payment processing, and an AI layer that knows your numbers.</p>
-    <p>Every line of code was written by Claude using the same process I use for daily operations. I handled product decisions, UX direction, and the domain knowledge that comes from actually working deals. The AI handled architecture, frontend, backend, and deployment. No developer. No agency. No contractor.</p>
-    <p>If the skills on this page show what AI can do for your daily workflow, Closing Day is what happens when you point the same system at building something from scratch.</p>
-    <a href="https://closingday.info" target="_blank" class="featured-project-btn">See the finished product</a>
+    <img src="closingday-logo.png" alt="Closing Day" class="featured-project-logo" onerror="this.style.display='none'">
+    <p style="font-size: 1.1rem; color: var(--text); font-weight: 600;">Closing Day is a pipeline + accountability platform for real estate agents.</p>
+    <p>Track every active deal, every key date, and every prospecting activity in one place. An AI coach that actually knows your numbers tells you what to do next. Built on the same agentic-AI stack documented elsewhere on this page.</p>
+    <a href="https://closingday.info" target="_blank" class="featured-project-btn">Visit Closing Day</a>
+  </div>
+
+  <h3 style="font-size: 1.2rem; margin-top: 3rem; margin-bottom: 0.8rem;">What it actually does</h3>
+  <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 1.2rem; max-width: 760px;">Built for the way agents actually work. Synced from the systems you already use. Coached by an AI that has read your numbers, not a generic dashboard.</p>
+  <div class="cd-feature-grid">
+    <div class="cd-feature">
+      <h4>Pipeline Tracker</h4>
+      <p>Every active listing and transaction in one view. Key dates, parties, status, stage. Auto-synced from SkySlope and Lofty so you stop maintaining three sources of truth.</p>
+    </div>
+    <div class="cd-feature">
+      <h4>Activity Logging</h4>
+      <p>Calls, texts, emails, appointments, conversations, listings, and closed deals all roll into daily, weekly, and monthly stat panels. The same input model accountability programs charge $1k/month for.</p>
+    </div>
+    <div class="cd-feature">
+      <h4>AI Coach (Knows Your Numbers)</h4>
+      <p>Wired into your live data. Knows your conversion ratios, your week-over-week trend, your goal gap. Tells you what to do next based on what's actually working for <em>you</em>, not generic advice from a coaching webinar.</p>
+    </div>
+    <div class="cd-feature">
+      <h4>Calendar &amp; Deadline Engine</h4>
+      <p>Inspection ends, financing contingency, closings, listing expirations. Computed from your contract dates and pushed to Google Calendar with the right parties invited so no deadline gets missed.</p>
+    </div>
+    <div class="cd-feature">
+      <h4>Skill Memory API</h4>
+      <p>Closing Day is also the cloud database powering every persona on this page. The same backend stores corrections, decisions, and institutional memory so your AI team gets smarter run over run.</p>
+    </div>
+    <div class="cd-feature">
+      <h4>External API + Integrations</h4>
+      <p>Bearer-token REST API for SkySlope sync, Lofty stat sync, and any tool that needs to read or write deal state. Built so the AI personas on this page can drive it without a human copy-pasting.</p>
+    </div>
+  </div>
+
+  <div class="card" style="background: var(--surface); border: 1px solid var(--border); margin-top: 2.5rem; padding: 2rem;">
+    <h3 style="font-size: 1.1rem; margin-bottom: 0.6rem;">How an agent shipped a SaaS product without writing code</h3>
+    <p style="color: var(--text-muted); font-size: 0.94rem;">Same workflow as the daily skills. I wrote what I wanted in plain English. <strong>Avery</strong> (Architect persona) drew up the schema. <strong>Lex</strong> (Engineer) wrote the code. <strong>Taylor</strong> smoke-tested. <strong>Quinn</strong> signed off on Definition of Done. <strong>Jordan</strong> deployed. <strong>Dana</strong> audited. Every change to every feature walks the same chain you'll see in the <a href="#team">Engineering &amp; QA division</a>. The skills that move my real estate business and the skills that ship my software product are the same skills, run by the same personas, against the same memory.</p>
+    <p style="color: var(--text-muted); font-size: 0.94rem; margin-top: 0.8rem;">The point isn't that AI can write code. Everyone knows that. The point is that the same operating system that runs my listings, my transactions, my marketing, and my prospecting can also ship a software product. One stack. One set of conventions. One audit trail. If you build the AI ops layer, the SaaS layer is a side effect.</p>
+  </div>
+
+  <div style="text-align: center; margin-top: 2.5rem;">
+    <a href="https://closingday.info" target="_blank" class="featured-project-btn" style="font-size: 1.05rem; padding: 16px 36px;">Try Closing Day &rarr;</a>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.8rem;">Free trial. No credit card. Same Claude account you used to install the desktop app gets you in.</p>
   </div>
 </section>
 
