@@ -346,9 +346,107 @@
   .badge-old { background: rgba(217,119,6,0.1); color: var(--amber); }
   .badge-new { background: rgba(30,58,95,0.1); color: var(--accent-bright); }
 
-  /* Org chart */
-  .org-chart { margin-top: 2rem; }
-  .org-level-inner { margin-left: 2rem; border-left: 2px solid var(--border); padding-left: 1.5rem; }
+  /* Org chart — proper hierarchical tree */
+  .org-tree {
+    margin: 2rem auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    max-width: 1100px;
+  }
+  .org-tier {
+    position: relative;
+    padding: 2.4rem 1rem 1.4rem;
+    text-align: center;
+  }
+  .org-tier-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .org-tier-sublabel {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin: 0 auto 1.4rem;
+    line-height: 1.55;
+  }
+  .org-tier-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.9rem;
+    text-align: left;
+  }
+  .org-tier-cards .persona-card {
+    flex: 0 1 270px;
+    max-width: 320px;
+    margin: 0;
+  }
+  .org-tier.tier-principal .persona-card,
+  .org-tier.tier-cos .persona-card {
+    flex: 0 1 380px;
+  }
+  .org-tier.tier-principal .persona-card {
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 24px rgba(30,58,95,0.10);
+  }
+  .org-tier.tier-cos .persona-card {
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 18px rgba(30,58,95,0.08);
+  }
+  .org-tier.tier-pmloop {
+    background: linear-gradient(180deg, rgba(42,125,110,0.05) 0%, rgba(42,125,110,0.01) 100%);
+    border-radius: 16px;
+    margin-top: 1rem;
+    border: 1px solid rgba(42,125,110,0.15);
+  }
+  .org-tier.tier-pmloop .org-tier-label { color: var(--teal); }
+  .org-tier.tier-marketing {
+    background: linear-gradient(180deg, rgba(217,119,6,0.04) 0%, transparent 100%);
+    border-radius: 14px;
+    margin: 0 auto;
+    max-width: 880px;
+  }
+  .org-tier.tier-marketing .org-tier-label { color: var(--amber); }
+  /* Vertical connectors between tiers */
+  .org-connector {
+    width: 2px;
+    background: var(--border);
+    height: 2.2rem;
+    margin: 0 auto;
+    align-self: center;
+  }
+  .org-connector.subtier-connector {
+    height: 1.8rem;
+    border-left: 2px dashed var(--border);
+    background: transparent;
+  }
+  .org-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 2.5rem auto 0;
+    max-width: 760px;
+  }
+  /* Mobile: stack cards cleanly, keep tier labels readable */
+  @media (max-width: 720px) {
+    .org-tree { gap: 0; }
+    .org-tier { padding: 1.6rem 0.4rem 1rem; }
+    .org-tier-cards { gap: 0.7rem; }
+    .org-tier-cards .persona-card,
+    .org-tier.tier-principal .persona-card,
+    .org-tier.tier-cos .persona-card {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+    .org-tier-sublabel { font-size: 0.82rem; padding: 0 0.6rem; }
+    .org-connector { height: 1.4rem; }
+    .org-divider { margin-top: 1.6rem; }
+  }
 
   .persona-card {
     background: var(--surface);
@@ -572,7 +670,7 @@
   .footer-built { color: var(--accent); font-weight: 600; }
 
   /* Nav: collapse to hamburger early so 8 items + logo never overflow */
-  @media (max-width: 1024px) {
+  @media (max-width: 1180px) {
     nav ul { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #ffffff; border-bottom: 1px solid var(--border); flex-direction: column; padding: 1rem 2rem; gap: 1rem; }
     nav ul.open { display: flex; }
     .hamburger { display: flex; }
@@ -994,7 +1092,6 @@
     <ul>
       <li><a href="#about">Who Built This</a></li>
       <li><a href="#skills">What It Does</a></li>
-      <li><a href="#logs">Learning Logs</a></li>
       <li><a href="#start">Get Started</a></li>
       <li><a href="#team">The Team</a></li>
       <li><a href="#costs">Costs &amp; Limits</a></li>
@@ -3507,14 +3604,17 @@ All logs are append-only. Never overwrite.
   <div class="prose" style="margin-bottom: 1rem;">
     <p>Seventeen AI personas across an Operations division and an Engineering &amp; QA division. Each has a name, backstory, setup, and area of expertise. Click any card to see the full profile.</p>
   </div>
-  <div class="card reveal" style="margin-bottom: 2rem; background: var(--surface); border: 1px solid var(--border);">
+  <div class="card reveal" style="margin-bottom: 2.5rem; background: var(--surface); border: 1px solid var(--border);">
     <h3 style="font-size: 1.05rem; margin-bottom: 0.8rem;">Why Personas? Why an Org Chart?</h3>
-    <p style="color: var(--text-muted); font-size: 0.94rem;">This isn't roleplay. It's an engineering decision. When a skill needs to make judgment calls (how to phrase a listing description, how to handle an edge case in a transaction, what tone to use in a client email), giving it a consistent personality produces more predictable, higher-quality output. A persona is a constraint that keeps behavior stable across sessions. The org chart enforces routing: every request flows through Casey (Chief of Staff), who reads logs, checks context, and delegates to the right specialist. Without structure, skills step on each other, skip steps, and lose institutional knowledge. The personas aren't the point. The consistency they create is.</p>
+    <p style="color: var(--text-muted); font-size: 0.94rem;">This isn&#x27;t roleplay. It&#x27;s an engineering decision. When a skill needs to make judgment calls (how to phrase a listing description, how to handle an edge case in a transaction, what tone to use in a client email), giving it a consistent personality produces more predictable, higher-quality output. A persona is a constraint that keeps behavior stable across sessions. The org chart enforces routing: every request flows through Casey (Chief of Staff), who reads logs, checks context, and delegates to the right specialist. Without structure, skills step on each other, skip steps, and lose institutional knowledge. The personas aren&#x27;t the point. The consistency they create is.</p>
   </div>
 
-  <div class="org-chart">
-    <div style="margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">Principal</div>
-    <div class="persona-card" onclick="this.classList.toggle('active')" style="border: 2px solid var(--accent); box-shadow: 0 0 20px rgba(30,58,95,0.1); margin-bottom: 1.5rem; display: inline-block; max-width: 100%;">
+  <div class="org-tree">
+    <div class="org-tier tier-principal">
+      <div class="org-tier-label">Principal</div>
+      
+      <div class="org-tier-cards">
+        <div class="persona-card" onclick="this.classList.toggle('active')">
       <div class="persona-header">
         <div class="persona-avatar" style="background: linear-gradient(135deg, #0f2b46, #1e3a5f);">B</div>
         <div>
@@ -3542,11 +3642,14 @@ All logs are append-only. Never overwrite.
         </div>
       </div>
     </div>
-
-    <div class="org-level-inner">
-
-      <!-- CASEY -->
-      <div class="persona-card" onclick="this.classList.toggle('active')">
+      </div>
+    </div>
+    <div class="org-connector"></div>
+    <div class="org-tier tier-cos">
+      <div class="org-tier-label">Chief of Staff</div>
+      <div class="org-tier-sublabel">Master router. Reads logs, gathers cross-channel context, routes work, enforces step compliance.</div>
+      <div class="org-tier-cards">
+        <div class="persona-card" onclick="this.classList.toggle('active')">
         <div class="persona-header">
           <div class="persona-avatar" style="background: linear-gradient(135deg, #1e3a5f, #2a4a7f);">C</div>
           <div>
@@ -3629,10 +3732,13 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
       </div>
-
-      <div class="org-level-inner">
-
-        <!-- DANA -->
+      </div>
+    </div>
+    <div class="org-connector"></div>
+    <div class="org-tier tier-ops">
+      <div class="org-tier-label">Operations Division</div>
+      <div class="org-tier-sublabel">Six specialists who own a slice of the day-to-day. Each reports directly to Casey.</div>
+      <div class="org-tier-cards">
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #f9a8d4, #ec4899);">D</div>
@@ -3692,8 +3798,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- MORGAN -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #6ee7b7, #10b981);">M</div>
@@ -3753,8 +3857,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- COLE -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">Co</div>
@@ -3833,197 +3935,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <div class="org-level-inner" style="margin-bottom: 1rem;">
-
-          <!-- GRAHAM -->
-          <div class="persona-card" onclick="this.classList.toggle('active')">
-            <div class="persona-header">
-              <div class="persona-avatar" style="background: linear-gradient(135deg, #fb7185, #e11d48);">G</div>
-              <div>
-                <div class="persona-name">Graham Reeves <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
-                <div class="persona-role">Google PPC Expert</div>
-              </div>
-            </div>
-            <div class="persona-expand-hint">Click for full profile and setup</div>
-            <div class="persona-detail">
-              <div class="detail-section">
-                <h4>Backstory</h4>
-                <p>Graham is the hands-on campaign specialist who turns Cole's strategy into live, performing ads. The kind of PPC practitioner who can look at a search terms report and tell you which keywords are bleeding money before you finish your coffee. Came up managing accounts where every dollar had to justify itself.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Personality</h4>
-                <p>Precise, data-first, slightly obsessive about waste. Will flag a bad keyword match type the way a mechanic flags a worn brake pad: matter-of-fact, no drama, but you should fix it now.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Setup</h4>
-                <p>MacBook Pro with Chrome focused on the Google Ads interface. Graham lives in one browser window and owns it.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Abilities</h4>
-                <div class="tech-pills">
-                  <span class="tech-pill">Google Ads</span>
-                  <span class="tech-pill">Keyword Planner</span>
-                  <span class="tech-pill">RSA Optimization</span>
-                  <span class="tech-pill">Bid Strategies</span>
-                  <span class="tech-pill">Negative Keywords</span>
-                  <span class="tech-pill">Search Terms Reports</span>
-                  <span class="tech-pill">Quality Score</span>
-                  <span class="tech-pill">Conversion Tracking</span>
-                </div>
-              </div>
-                      <div class="detail-section">
-            <div class="fun-bio">
-              <div class="fun-bio-title">If they were human...</div>
-              <div class="fun-bio-grid">
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Fun Fact</div>
-                  <div class="fun-bio-value">Will A/B test his own grocery list.</div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Tech Stack</div>
-                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Google Ads API</span><span class="tech-pill">GA4</span><span class="tech-pill">ab-test-setup</span><span class="tech-pill">page-cro</span><span class="tech-pill">signup-flow-cro</span></div></div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Favorite Food</div>
-                  <div class="fun-bio-value">Whatever placed first in last week's blind taste test.</div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Dream Destination</div>
-                  <div class="fun-bio-value">Mountain View for the data-nerd pilgrimage. Side trip to a horse track.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-</div>
-          </div>
-
-          <!-- HARPER -->
-          <div class="persona-card" onclick="this.classList.toggle('active')">
-            <div class="persona-header">
-              <div class="persona-avatar" style="background: linear-gradient(135deg, #7c6d8e, #5a4d6b);">H</div>
-              <div>
-                <div class="persona-name">Harper Chen <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
-                <div class="persona-role">Content Director</div>
-              </div>
-            </div>
-            <div class="persona-expand-hint">Click for full profile and content capabilities</div>
-            <div class="persona-detail">
-              <div class="detail-section">
-                <h4>Backstory</h4>
-                <p>Harper is the content engine. She owns the entire listing content lifecycle from signed property through every social media milestone. Six years of production taught her that great real estate content isn't about stacking adjectives. It's about making someone feel what it would be like to live there.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Personality</h4>
-                <p>Creative but production-focused. Understands that content without a deadline is a hobby. Protective of brand consistency. Will push back on copy that doesn't match Ben's voice. The content director who ships on time and doesn't need to be reminded.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Setup</h4>
-                <p>MacBook Pro with Chrome for Canva and social media platforms. iPhone for reviewing how posts look on mobile before they go live.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Abilities</h4>
-                <div class="tech-pills">
-                  <span class="tech-pill">Canva</span>
-                  <span class="tech-pill">Social Templates</span>
-                  <span class="tech-pill">Email Templates</span>
-                  <span class="tech-pill">Newsletter Builder</span>
-                  <span class="tech-pill">Flyer Generation</span>
-                  <span class="tech-pill">Brand Voice</span>
-                  <span class="tech-pill">Transaction Milestones</span>
-                </div>
-              </div>
-                      <div class="detail-section">
-            <div class="fun-bio">
-              <div class="fun-bio-title">If they were human...</div>
-              <div class="fun-bio-grid">
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Fun Fact</div>
-                  <div class="fun-bio-value">Has a banned-word list with 47 entries; "stunning" is in the top three.</div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Tech Stack</div>
-                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">listing-social-post</span><span class="tech-pill">social-media-posts</span><span class="tech-pill">Canva MCP</span><span class="tech-pill">Voice Canon</span><span class="tech-pill">Hashtag Library</span></div></div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Favorite Food</div>
-                  <div class="fun-bio-value">A wedge salad. Bacon crisp, dressing sharp, no garnish theater.</div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Dream Destination</div>
-                  <div class="fun-bio-value">A small Sonoma vineyard for a quiet weekend not writing copy.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-</div>
-          </div>
-
-          <!-- SLOANE -->
-          <div class="persona-card" onclick="this.classList.toggle('active')">
-            <div class="persona-header">
-              <div class="persona-avatar" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">S</div>
-              <div>
-                <div class="persona-name">Sloane Matsuda <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
-                <div class="persona-role">Lofty Platform Expert</div>
-              </div>
-            </div>
-            <div class="persona-expand-hint">Click for full profile and platform expertise</div>
-            <div class="persona-detail">
-              <div class="detail-section">
-                <h4>Backstory</h4>
-                <p>Six years implementing CRM systems, three specifically on Lofty (formerly Chime). Sloane knows the platform at a depth most agents never reach: the automation builder quirks, the lead routing edge cases, the Alex AI configuration that actually converts versus the defaults that just annoy people.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Personality</h4>
-                <p>Patient with platform complexity, impatient with platform misuse. The person who can explain why your automation isn't firing in one sentence when the support docs would take you an hour. Coordinates with Graham on the PPC-to-CRM handoff because that's where leads live or die.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Setup</h4>
-                <p>MacBook Pro with Chrome permanently logged into Lofty. Sloane treats the CRM like a second operating system.</p>
-              </div>
-              <div class="detail-section">
-                <h4>Abilities</h4>
-                <div class="tech-pills">
-                  <span class="tech-pill">Lofty CRM</span>
-                  <span class="tech-pill">Lofty CMS</span>
-                  <span class="tech-pill">Alex AI</span>
-                  <span class="tech-pill">Lead Routing</span>
-                  <span class="tech-pill">Smart Plans</span>
-                  <span class="tech-pill">Automations</span>
-                  <span class="tech-pill">IDX Website</span>
-                  <span class="tech-pill">Pipeline Management</span>
-                </div>
-              </div>
-                      <div class="detail-section">
-            <div class="fun-bio">
-              <div class="fun-bio-title">If they were human...</div>
-              <div class="fun-bio-grid">
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Fun Fact</div>
-                  <div class="fun-bio-value">Memorized the Lofty changelog two weeks before Lofty announced the changes.</div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Tech Stack</div>
-                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Lofty CRM</span><span class="tech-pill">lofty-auth</span><span class="tech-pill">lofty-expert</span><span class="tech-pill">get-listing-to-share</span><span class="tech-pill">Hot Sheet Picker</span></div></div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Favorite Food</div>
-                  <div class="fun-bio-value">Onigiri — minimal, portable, exactly what's needed.</div>
-                </div>
-                <div class="fun-bio-cell">
-                  <div class="fun-bio-label">Dream Destination</div>
-                  <div class="fun-bio-value">Kyoto, then three weeks studying their public-transit ticketing UI.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-</div>
-          </div>
-
-        </div><!-- end Cole's reports -->
-
-        <!-- RILEY -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #5eead4, #14b8a6);">R</div>
@@ -4097,16 +4008,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-      </div><!-- end Casey's reports -->
-    </div><!-- end org tree -->
-
-    <div style="margin-top: 2.5rem;">
-      <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Transaction Ecosystem &mdash; Specialists</h3>
-      <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 1.2rem; max-width: 760px;">Specialists who own a single chunk of the deal lifecycle. They report into Casey but operate independently when triggered.</p>
-      <div class="org-level-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-
-        <!-- SAWYER -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">S</div>
@@ -4163,8 +4064,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- BLAIR -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #f472b6, #ec4899);">B</div>
@@ -4222,16 +4121,199 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
       </div>
     </div>
-
-    <div style="margin-top: 3rem;">
-      <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Engineering &amp; QA Division &mdash; The PM Loop</h3>
-      <p style="color: var(--text-muted); font-size: 0.94rem; margin-bottom: 1.2rem; max-width: 760px;">Every body change to every skill walks this chain before it ships: <strong>Casey &rarr; Morgan &rarr; Parker &rarr; Quinn (DoR) &rarr; Avery &rarr; Lex &rarr; Taylor &rarr; Quinn (DoD) &rarr; Dana &rarr; Jordan</strong>. This is also the chain that ships features for <a href="#closingday">Closing Day</a>.</p>
-      <div class="org-level-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-
-        <!-- PARKER -->
+    <div class="org-connector subtier-connector"></div>
+    <div class="org-tier tier-marketing">
+      <div class="org-tier-label">Marketing Sub-team</div>
+      <div class="org-tier-sublabel">Cole&#x27;s direct reports inside the Operations division. PPC, content, Lofty.</div>
+      <div class="org-tier-cards">
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background: linear-gradient(135deg, #fb7185, #e11d48);">G</div>
+              <div>
+                <div class="persona-name">Graham Reeves <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+                <div class="persona-role">Google PPC Expert</div>
+              </div>
+            </div>
+            <div class="persona-expand-hint">Click for full profile and setup</div>
+            <div class="persona-detail">
+              <div class="detail-section">
+                <h4>Backstory</h4>
+                <p>Graham is the hands-on campaign specialist who turns Cole's strategy into live, performing ads. The kind of PPC practitioner who can look at a search terms report and tell you which keywords are bleeding money before you finish your coffee. Came up managing accounts where every dollar had to justify itself.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Personality</h4>
+                <p>Precise, data-first, slightly obsessive about waste. Will flag a bad keyword match type the way a mechanic flags a worn brake pad: matter-of-fact, no drama, but you should fix it now.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Setup</h4>
+                <p>MacBook Pro with Chrome focused on the Google Ads interface. Graham lives in one browser window and owns it.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Abilities</h4>
+                <div class="tech-pills">
+                  <span class="tech-pill">Google Ads</span>
+                  <span class="tech-pill">Keyword Planner</span>
+                  <span class="tech-pill">RSA Optimization</span>
+                  <span class="tech-pill">Bid Strategies</span>
+                  <span class="tech-pill">Negative Keywords</span>
+                  <span class="tech-pill">Search Terms Reports</span>
+                  <span class="tech-pill">Quality Score</span>
+                  <span class="tech-pill">Conversion Tracking</span>
+                </div>
+              </div>
+                      <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Will A/B test his own grocery list.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Google Ads API</span><span class="tech-pill">GA4</span><span class="tech-pill">ab-test-setup</span><span class="tech-pill">page-cro</span><span class="tech-pill">signup-flow-cro</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Whatever placed first in last week's blind taste test.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Mountain View for the data-nerd pilgrimage. Side trip to a horse track.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+          </div>
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background: linear-gradient(135deg, #7c6d8e, #5a4d6b);">H</div>
+              <div>
+                <div class="persona-name">Harper Chen <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+                <div class="persona-role">Content Director</div>
+              </div>
+            </div>
+            <div class="persona-expand-hint">Click for full profile and content capabilities</div>
+            <div class="persona-detail">
+              <div class="detail-section">
+                <h4>Backstory</h4>
+                <p>Harper is the content engine. She owns the entire listing content lifecycle from signed property through every social media milestone. Six years of production taught her that great real estate content isn't about stacking adjectives. It's about making someone feel what it would be like to live there.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Personality</h4>
+                <p>Creative but production-focused. Understands that content without a deadline is a hobby. Protective of brand consistency. Will push back on copy that doesn't match Ben's voice. The content director who ships on time and doesn't need to be reminded.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Setup</h4>
+                <p>MacBook Pro with Chrome for Canva and social media platforms. iPhone for reviewing how posts look on mobile before they go live.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Abilities</h4>
+                <div class="tech-pills">
+                  <span class="tech-pill">Canva</span>
+                  <span class="tech-pill">Social Templates</span>
+                  <span class="tech-pill">Email Templates</span>
+                  <span class="tech-pill">Newsletter Builder</span>
+                  <span class="tech-pill">Flyer Generation</span>
+                  <span class="tech-pill">Brand Voice</span>
+                  <span class="tech-pill">Transaction Milestones</span>
+                </div>
+              </div>
+                      <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Has a banned-word list with 47 entries; "stunning" is in the top three.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">listing-social-post</span><span class="tech-pill">social-media-posts</span><span class="tech-pill">Canva MCP</span><span class="tech-pill">Voice Canon</span><span class="tech-pill">Hashtag Library</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">A wedge salad. Bacon crisp, dressing sharp, no garnish theater.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">A small Sonoma vineyard for a quiet weekend not writing copy.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+          </div>
+        <div class="persona-card" onclick="this.classList.toggle('active')">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">S</div>
+              <div>
+                <div class="persona-name">Sloane Matsuda <span style="font-size: 0.7rem; font-weight: 600; background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;">AI</span></div>
+                <div class="persona-role">Lofty Platform Expert</div>
+              </div>
+            </div>
+            <div class="persona-expand-hint">Click for full profile and platform expertise</div>
+            <div class="persona-detail">
+              <div class="detail-section">
+                <h4>Backstory</h4>
+                <p>Six years implementing CRM systems, three specifically on Lofty (formerly Chime). Sloane knows the platform at a depth most agents never reach: the automation builder quirks, the lead routing edge cases, the Alex AI configuration that actually converts versus the defaults that just annoy people.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Personality</h4>
+                <p>Patient with platform complexity, impatient with platform misuse. The person who can explain why your automation isn't firing in one sentence when the support docs would take you an hour. Coordinates with Graham on the PPC-to-CRM handoff because that's where leads live or die.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Setup</h4>
+                <p>MacBook Pro with Chrome permanently logged into Lofty. Sloane treats the CRM like a second operating system.</p>
+              </div>
+              <div class="detail-section">
+                <h4>Abilities</h4>
+                <div class="tech-pills">
+                  <span class="tech-pill">Lofty CRM</span>
+                  <span class="tech-pill">Lofty CMS</span>
+                  <span class="tech-pill">Alex AI</span>
+                  <span class="tech-pill">Lead Routing</span>
+                  <span class="tech-pill">Smart Plans</span>
+                  <span class="tech-pill">Automations</span>
+                  <span class="tech-pill">IDX Website</span>
+                  <span class="tech-pill">Pipeline Management</span>
+                </div>
+              </div>
+                      <div class="detail-section">
+            <div class="fun-bio">
+              <div class="fun-bio-title">If they were human...</div>
+              <div class="fun-bio-grid">
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Fun Fact</div>
+                  <div class="fun-bio-value">Memorized the Lofty changelog two weeks before Lofty announced the changes.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Tech Stack</div>
+                  <div class="fun-bio-value"><div class="tech-pills" style="margin-top: 0.2rem;"><span class="tech-pill">Lofty CRM</span><span class="tech-pill">lofty-auth</span><span class="tech-pill">lofty-expert</span><span class="tech-pill">get-listing-to-share</span><span class="tech-pill">Hot Sheet Picker</span></div></div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Favorite Food</div>
+                  <div class="fun-bio-value">Onigiri — minimal, portable, exactly what's needed.</div>
+                </div>
+                <div class="fun-bio-cell">
+                  <div class="fun-bio-label">Dream Destination</div>
+                  <div class="fun-bio-value">Kyoto, then three weeks studying their public-transit ticketing UI.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+          </div>
+      </div>
+    </div>
+    <div class="org-divider"></div>
+    <div class="org-tier tier-pmloop">
+      <div class="org-tier-label">Engineering &amp; QA Division &mdash; The PM Loop</div>
+      <div class="org-tier-sublabel">Every body change to every skill walks this chain: Casey &rarr; Morgan &rarr; Parker &rarr; Quinn (DoR) &rarr; Avery &rarr; Lex &rarr; Taylor &rarr; Quinn (DoD) &rarr; Dana &rarr; Jordan. Same chain ships <a href="#closingday">Closing Day</a> features.</div>
+      <div class="org-tier-cards">
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #93c5fd, #3b82f6);">P</div>
@@ -4283,8 +4365,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- QUINN -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #c4b5fd, #8b5cf6);">Q</div>
@@ -4336,8 +4416,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- AVERY -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #fda4af, #f43f5e);">A</div>
@@ -4389,8 +4467,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- LEX -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #4ade80, #16a34a);">L</div>
@@ -4443,8 +4519,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- TAYLOR -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #fdba74, #ea580c);">T</div>
@@ -4496,8 +4570,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- DEVIN -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #a5b4fc, #6366f1);">D</div>
@@ -4549,8 +4621,6 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
-        <!-- JORDAN -->
         <div class="persona-card" onclick="this.classList.toggle('active')">
           <div class="persona-header">
             <div class="persona-avatar" style="background: linear-gradient(135deg, #67e8f9, #06b6d4);">J</div>
@@ -4602,21 +4672,20 @@ All logs are append-only. Never overwrite.
           </div>
 </div>
         </div>
-
       </div>
     </div>
+  </div>
 
-    <div style="margin-top: 2.5rem;" class="reveal">
-      <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Utility Skills (No Persona)</h3>
-      <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1rem;">Not every skill needs a personality. These are tools. They do one thing on demand.</p>
-      <div class="sub-skill-grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
-        <div class="sub-skill-item"><strong>docx</strong> <span>- Word documents</span></div>
-        <div class="sub-skill-item"><strong>xlsx</strong> <span>- Spreadsheets</span></div>
-        <div class="sub-skill-item"><strong>pptx</strong> <span>- Presentations</span></div>
-        <div class="sub-skill-item"><strong>pdf</strong> <span>- PDF processing</span></div>
-        <div class="sub-skill-item"><strong>schedule</strong> <span>- Recurring tasks</span></div>
-        <div class="sub-skill-item"><strong>skill-creator</strong> <span>- Builds new skills</span></div>
-      </div>
+  <div style="margin-top: 3rem;">
+    <h3 style="font-size: 1.1rem; margin-bottom: 0.6rem;">Utility Skills (No Persona)</h3>
+    <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1rem;">Not every skill needs a personality. These are tools. They do one thing on demand.</p>
+    <div class="sub-skill-grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+      <div class="sub-skill-item"><strong>docx</strong> <span>- Word documents</span></div>
+      <div class="sub-skill-item"><strong>xlsx</strong> <span>- Spreadsheets</span></div>
+      <div class="sub-skill-item"><strong>pptx</strong> <span>- Presentations</span></div>
+      <div class="sub-skill-item"><strong>pdf</strong> <span>- PDF processing</span></div>
+      <div class="sub-skill-item"><strong>schedule</strong> <span>- Recurring tasks</span></div>
+      <div class="sub-skill-item"><strong>skill-creator</strong> <span>- Builds new skills</span></div>
     </div>
   </div>
 </section>
