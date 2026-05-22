@@ -84,7 +84,7 @@
     --glow-strong: rgba(30,58,95,0.08);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: clip; } /* clip, not hidden, so the sticky nav still works; stops the .hero::before glow from causing horizontal scroll on mobile */
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: var(--bg);
