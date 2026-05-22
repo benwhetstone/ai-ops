@@ -678,7 +678,9 @@
 
   /* Mobile */
   @media (max-width: 768px) {
-    .about-intro { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .about-intro { grid-template-columns: 1fr; justify-items: center; text-align: left; }
+    /* Left-align long body copy on mobile; centered multi-line paragraphs read poorly on phones. Headlines, eyebrow tags, and buttons stay centered. */
+    .hero > p, .get-started-callout p, .featured-project p, .tipjar-inline p { text-align: left; }
     .card-grid, .hw-grid, .roadmap-grid, .contact-grid, .comparison-table { grid-template-columns: 1fr; }
     .cost-grid { grid-template-columns: 1fr; }
     .hero { padding: 4rem 1.5rem 3rem; }
